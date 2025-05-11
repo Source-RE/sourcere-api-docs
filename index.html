@@ -1,0 +1,916 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>SourceRE API Documentation</title>
+    <style>
+      body {
+        margin: 0;
+        font-family: sans-serif;
+        background: #ffffff;
+        line-height: 1.7;
+        color: #333;
+      }
+      header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        background: #fff;
+        color: #1a202c;
+        padding: 1rem 2rem;
+        position: sticky;
+        top: 0;
+        box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+        z-index: 1000;
+      }
+      header img {
+        height: 32px;
+        margin-right: 0.5rem;
+      }
+      header .title {
+        display: flex;
+        align-items: center;
+        font-weight: 600;
+        font-size: 1.2rem;
+      }
+      nav {
+        display: flex;
+        align-content: center;
+        align-items: center;
+        justify-items: center;
+        justify-content: center;
+        text-align: center;
+        border: 2px solid #6307a6;
+      }
+      nav span {
+        cursor: pointer;
+        padding: 0.5rem 1rem;
+        border-left: 2px solid #6307a6;
+        color: #6307a6;
+        font-weight: 600;
+        background-color: #fff;
+        width: 140px;
+      }
+      nav span:first-child {
+        border-left: none;
+      }
+      nav span.active {
+        background-color: #6707ab;
+        color: #fff;
+      }
+      main {
+        padding: 2rem;
+        max-width: 1000px;
+        margin: auto;
+        background: #ffffff;
+      }
+      .tab-content {
+        display: none;
+      }
+      .tab-content.active {
+        display: block;
+      }
+      h1,
+      h2,
+      h3 {
+        font-weight: 500;
+        margin-top: 2rem;
+        padding-top: 1rem;
+        border-top: 1px solid #eee;
+      }
+      h1:first-child,
+      h2:first-child,
+      h3:first-child {
+        border-top: none;
+        padding-top: 0;
+      }
+      code {
+        background: #f5f5f5;
+        padding: 2px 4px;
+        border-radius: 4px;
+      }
+      pre {
+        background: #f5f5f5;
+        padding: 1rem;
+        overflow: auto;
+        border-radius: 6px;
+      }
+      table {
+        border-collapse: collapse;
+        width: 100%;
+        margin-top: 1rem;
+        margin-bottom: 1rem;
+      }
+      table,
+      th,
+      td {
+        border: 1px solid #ddd;
+      }
+      th,
+      td {
+        padding: 8px 12px;
+        text-align: left;
+      }
+      ul,
+      ol {
+        padding-left: 1.5rem;
+        margin-top: 0.5rem;
+        margin-bottom: 1.5rem;
+      }
+      p {
+        margin-top: 1rem;
+        margin-bottom: 1rem;
+      }
+    </style>
+  </head>
+  <body>
+    <header>
+      <div class="title">
+        <img src="logo.png" alt="SourceRE Logo" />
+        API DOCUMENTATION
+      </div>
+      <nav>
+        <span data-tab="webapi" class="active">RESO Web API</span>
+        <span data-tab="webhooks">Webhooks</span>
+        <span data-tab="addedit">Add/Edit Partners</span>
+      </nav>
+    </header>
+
+    <main>
+      <div id="webapi" class="tab-content active">
+        <h1>SourceRE RESO Web API</h1>
+
+        <h2>Overview</h2>
+        <p>
+          SourceRE is a RESO Web API-compliant platform designed for real estate
+          software vendors to access standardized MLS data feeds. It enables
+          vendors to purchase access to MLS data based on MLS-defined Plans,
+          which are provisioned for the vendor's specific Products. Each feed is
+          unique to an MLS + Product combination and comes with its own
+          permanent JWT Bearer Token.
+        </p>
+        <p>
+          Data access, structure, and enumerations are tailored per MLS. Every
+          Feed reflects its MLS’s specific metadata, field-level permissions,
+          and record-level access rules, ensuring MLSs retain granular control
+          over how their data is consumed.
+        </p>
+
+        <h2>Authentication</h2>
+        <p>
+          Each Feed is associated with a dedicated Bearer token, issued upon
+          purchase of a Plan for a Product. This token must be included in the
+          <code>Authorization</code> header for all API requests:
+        </p>
+        <pre><code>Authorization: Bearer &lt;your_token&gt;</code></pre>
+        <p>
+          These tokens are long-lived and should be stored securely. Tokens are
+          scoped to a specific Feed and cannot access data from other feeds.
+        </p>
+
+        <h2>Metadata & Lookups</h2>
+        <p>
+          SourceRE provides metadata discovery in accordance with the RESO Web
+          API standard:
+        </p>
+        <ul>
+          <li>
+            <code>$metadata</code> – Describes the available entity types and
+            their fields for the given feed.
+          </li>
+          <li>
+            <code>/Lookup</code> – Returns enumeration values for fields
+            annotated with <code>RESO.OData.Metadata.LookupName</code>.
+          </li>
+        </ul>
+        <p>Enumeration fields in <code>$metadata</code>:</p>
+        <ul>
+          <li>
+            Are typed as <code>Edm.String</code> or
+            <code>Collection(Edm.String)</code>
+          </li>
+          <li>Include an annotation identifying the Lookup name</li>
+        </ul>
+        <pre><code>&lt;Annotation Term="RESO.OData.Metadata.LookupName" String="PropertyType" /&gt;</code></pre>
+
+        <h2>Data Access and Structure</h2>
+        <h3>Endpoints</h3>
+        <p>All entity types are exposed as OData resources under:</p>
+        <pre><code>https://api.sourceredb.com/OData/{EntityType}</code></pre>
+
+        <h3>Entity Naming & Expansion Structure</h3>
+        <p>
+          SourceRE uses a consistent naming convention for entity types,
+          especially for child entities that are tightly scoped to a single
+          parent resource:
+        </p>
+        <ul>
+          <li>
+            Child entity types that exist only in the context of a single parent
+            will appear as top-level resources with a prefixed name.
+          </li>
+          <li>
+            Example: <code>PropertyRooms</code> is the top-level resource
+            representing individual room records for a property.
+          </li>
+          <li>
+            These same child entities may also be accessed via the navigation
+            property of the parent entity using <code>$expand</code>.
+          </li>
+        </ul>
+        <pre><code>GET /OData/Property?$expand=Rooms</code></pre>
+        <p>
+          MLS-specific property extensions will be exposed as a resource such as
+          <code>PropertyCustom</code>, which may be expanded via
+          <code>$expand=Custom</code>.
+        </p>
+
+        <h2>Plans-Based Permissions</h2>
+        <p>
+          Each record includes a <code>PlansEnabled</code> array field listing
+          which Plans grant access to that record. This lets clients determine
+          the context in which a record can be displayed or processed.
+        </p>
+        <p>Other optional fields may include:</p>
+        <ul>
+          <li>
+            <code>IDX</code>, <code>VOW</code> – Flags for display eligibility
+          </li>
+          <li>
+            <code>SyndicateTo</code> – Enumerated field indicating syndication
+            channels
+          </li>
+        </ul>
+
+        <h2>Field & Record-Level Restrictions</h2>
+        <p>
+          Permissions are defined per Plan by the MLS and enforced
+          automatically. This may include:
+        </p>
+        <ul>
+          <li>Which fields are included</li>
+          <li>Which records are visible</li>
+        </ul>
+
+        <h2>Pagination & Filtering</h2>
+        <h3>Pagination</h3>
+        <p>
+          All endpoints support OData-compliant pagination via
+          <code>$top</code> and <code>$skip</code>.
+        </p>
+        <table border="1" cellpadding="6">
+          <tr>
+            <th>Resource</th>
+            <th>Default/Max $top</th>
+          </tr>
+          <tr>
+            <td>Property, Media, Lookup</td>
+            <td>1000</td>
+          </tr>
+          <tr>
+            <td>All other resources</td>
+            <td>Up to 1000 (may be limited to 200)</td>
+          </tr>
+        </table>
+        <pre><code>/OData/Property?$top=200&$skip=200</code></pre>
+
+        <h3>Filtering</h3>
+        <p>OData filters are supported on most fields.</p>
+        <pre><code>$filter=ModificationTimestamp gt 2024-01-01T00:00:00Z</code></pre>
+        <p>With bounds:</p>
+        <pre><code>$filter=ModificationTimestamp gt 2024-01-01T00:00:00Z and ModificationTimestamp lt 2024-01-10T00:00:00Z</code></pre>
+
+        <h2>Batch Pulls</h2>
+        <p>
+          To optimize replication, SourceRE supports Batch ID Pulling for
+          primary keys:
+        </p>
+        <pre><code>$select=ListingKey
+$top=100000</code></pre>
+
+        <h2>Deleted Records</h2>
+        <p>Deleted records appear for 10 days after deletion with:</p>
+        <pre><code>{
+  "DeletedInSource": true,
+  "DeletionTimestamp": "2025-04-01T12:34:56Z"
+}</code></pre>
+        <p>To reconcile deletions, clients can:</p>
+        <ul>
+          <li>Pull all primary keys</li>
+          <li>Compare against their local system</li>
+          <li>Purge keys not found and not marked as deleted</li>
+        </ul>
+
+        <h2>Replication Strategy</h2>
+        <h3>Initial Load</h3>
+        <p>Clients must replicate feed data locally. SourceRE recommends:</p>
+        <ul>
+          <li>Request data using the entity endpoint</li>
+          <li>Follow <code>@odata.nextLink</code> until complete</li>
+          <li>
+            If interrupted, resume using:
+            <code
+              >$filter=APIModificationTimestamp gt
+              &lt;last_successful_timestamp&gt;</code
+            >
+          </li>
+        </ul>
+
+        <h3>Ongoing Updates</h3>
+        <p>
+          Poll for new/updated records using
+          <code>ModificationTimestamp</code> filters:
+        </p>
+        <pre><code>$filter=ModificationTimestamp gt 2025-05-07T00:00:00Z and ModificationTimestamp lt 2025-05-08T00:00:00Z</code></pre>
+        <p>
+          Pull metadata and lookup updates no more than once per day. We
+          recommend refreshing other data at least once per hour. Within
+          SourceRE, data updates will occur in 10-minute intervals.
+        </p>
+
+        <h2>Media Handling</h2>
+        <p>
+          The <code>Media</code> resource contains URLs pointing to hosted
+          images and documents.
+        </p>
+        <p>
+          <strong>Important:</strong> Do not hotlink these URLs in production.
+          Always replicate the media files to your own servers.
+        </p>
+
+        <h2>Rate Limits</h2>
+        <p>
+          Unless otherwise noted, the following rate limits apply
+          <em>per Feed</em>:
+        </p>
+        <ul>
+          <li>No concurrent requests</li>
+          <li>Max 3 requests per second</li>
+          <li>Max 5,000 requests per hour</li>
+          <li>Max 100 GB downloaded per 24-hour period</li>
+        </ul>
+        <p>
+          Violations result in HTTP <code>429</code> responses. Clients must
+          respect back-off strategies and avoid retry storms.
+        </p>
+        <p>
+          For assistance, contact: <strong>api-support@sourceredb.com</strong>
+        </p>
+      </div>
+
+      <div id="webhooks" class="tab-content">
+        <h1>Webhooks (Push Delivery of Entity Events)</h1>
+
+        <h2>Overview</h2>
+        <p>
+          As an alternative replication method, SourceRE supports webhook
+          notifications for delivering data change events in real time. The
+          system implements the
+          <strong>RESO Webhooks Push Specification</strong> with the
+          <code>EntityEvent</code> payload format.
+        </p>
+        <p>
+          These push-based webhooks allow vendors to automatically stay in sync
+          with their subscribed Feeds by receiving lightweight notifications for
+          creates, updates, and deletions across entities.
+        </p>
+
+        <h2>Subscription Model</h2>
+        <p>
+          Each vendor may configure one or more webhook subscriptions per Feed.
+          A subscription specifies the following information:
+        </p>
+        <ul>
+          <li>
+            <strong>Feed</strong> – The SourceRE Feed this subscription applies
+            to
+          </li>
+          <li>
+            <strong>Webhook Endpoint URL</strong> – The vendor’s HTTPS endpoint
+            to receive webhook events
+          </li>
+          <li>
+            <strong>Entity Types</strong> – One or more entity types to receive
+            notifications for (e.g. Property, Media, Member)
+          </li>
+          <li>
+            <strong>Bearer Token Value</strong> – To be applied in the
+            Authorization header of each request to the Webhook Endpoint
+          </li>
+          <li>
+            <strong>Active</strong> – Flag indicating whether the webhook is
+            active
+          </li>
+        </ul>
+        <p>Subscriptions can be managed via the SourceRE Vendor Portal.</p>
+
+        <h2>Event Delivery</h2>
+        <h3>Endpoint Format</h3>
+        <p>
+          All webhook deliveries are HTTPS POST requests with the following
+          properties:
+        </p>
+        <ul>
+          <li>
+            <strong>Body:</strong> JSON array of
+            <code>EntityEvent</code> objects
+          </li>
+          <li>
+            <strong>Headers:</strong><br />
+            <code>Content-Type: application/json</code><br />
+            <code>Authorization: Bearer {Bearer Token Value}</code>
+          </li>
+        </ul>
+
+        <h3>Sample Payload</h3>
+        <pre><code>[
+  {
+    "ResourceName": "Property",
+    "EventType": "Update",
+    "EventTimestamp": "2025-05-09T14:35:21.000Z",
+    "ResourceRecordKey": "fe3d9ae1a9734db29e8e-5ac85d2f5f1f",
+    "APIModificationTimestamp": "2025-02-01T14:35:20.000Z",
+    "PlansEnabled": ["IDX", "VOW"],
+    "DeletedInSource": false
+  }
+]</code></pre>
+
+        <h3>Event Object Fields</h3>
+        <ul>
+          <li>
+            <strong>ResourceName</strong> – RESO entity name (e.g., Property,
+            Media, etc.)
+          </li>
+          <li><strong>EventType</strong> – One of Create, Update, or Delete</li>
+          <li>
+            <strong>EventTimestamp</strong> – Time SourceRE emitted the event
+            (ISO 8601)
+          </li>
+          <li>
+            <strong>APIModificationTimestamp</strong> – Time the entity was last
+            modified in SourceRE
+          </li>
+          <li>
+            <strong>ResourceRecordKey</strong> – Primary key for the record
+          </li>
+          <li>
+            <strong>PlansEnabled</strong> – List of Plan names that grant access
+            to this record
+          </li>
+          <li>
+            <strong>DeletedInSource</strong> – If true, record is soft-deleted
+            and will disappear after 10 days
+          </li>
+        </ul>
+
+        <h2>Delivery Semantics & Retry Logic</h2>
+        <ul>
+          <li>
+            Deliveries follow <strong>at-least-once semantics</strong> (clients
+            must de-duplicate)
+          </li>
+          <li><strong>Max 5 seconds</strong> to respond with HTTP 200</li>
+          <li>
+            Failed requests (timeout, 5xx) are retried with
+            <strong>exponential backoff</strong>
+          </li>
+          <li><strong>Retry window:</strong> up to 24 hours</li>
+          <li>After 24 hours of failures, the webhook is disabled</li>
+        </ul>
+        <p>To resume, a vendor must re-enable it via the Portal or API.</p>
+
+        <h2>Recommendations for Clients</h2>
+        <p>Your Webhook Endpoint URL must:</p>
+        <ul>
+          <li>Be secured via HTTPS</li>
+          <li>Respond with 200 OK on success</li>
+          <li>Queue or asynchronously process events</li>
+        </ul>
+        <p>You should:</p>
+        <ul>
+          <li>
+            Track (ResourceName + ResourceRecordKey + APIModificationTimestamp)
+            for deduplication
+          </li>
+          <li>
+            Pull records using the Web API as needed (webhooks notify only)
+          </li>
+          <li>
+            Acknowledge POSTs quickly, even if full processing is deferred
+          </li>
+        </ul>
+
+        <h2>Resource Coverage</h2>
+        <p>
+          Webhook subscriptions can be made for any top-level RESO resource
+          supported by the Feed, including:
+        </p>
+        <ul>
+          <li>Property</li>
+          <li>Media</li>
+          <li>Member</li>
+          <li>Office</li>
+          <li>Teams</li>
+          <li>Contacts</li>
+          <li>...and more, depending on your metadata</li>
+        </ul>
+        <p>
+          You may specify a subset of entity types to reduce delivery volume.
+        </p>
+
+        <h2>Deleted Records</h2>
+        <p>
+          <code>EventType: "Delete"</code> with
+          <code>DeletedInSource: true</code> indicates a soft-deleted record.
+        </p>
+        <ul>
+          <li>These records remain visible for 10 days</li>
+          <li>
+            You may purge your local copy immediately or wait for expiration
+          </li>
+          <li>
+            To catch up after missed events, use the Web API with
+            <code>$select</code> and <code>$top=100000</code>
+          </li>
+        </ul>
+
+        <h2>Rate Limits</h2>
+        <p>
+          Webhook deliveries do <strong>not</strong> count toward your Feed's
+          API rate limits.
+        </p>
+        <p>
+          However, if your Webhook Endpoint responds slowly or frequently fails,
+          SourceRE may pause or disable delivery to avoid resource strain.
+        </p>
+
+        <h2>Registering Webhooks</h2>
+        <p>To register a webhook:</p>
+        <ol>
+          <li>Log into the SourceRE Vendor Portal</li>
+          <li>Select the Feed</li>
+          <li>
+            Provide:
+            <ul>
+              <li>HTTPS callback URL</li>
+              <li>Entity types to subscribe to</li>
+              <li>Your chosen Bearer Token Value</li>
+            </ul>
+          </li>
+        </ol>
+
+        <h2>Questions?</h2>
+        <p>📧 <strong>api-support@sourceredb.com</strong></p>
+      </div>
+      <div id="addedit" class="tab-content">
+        <h1>Add/Edit API (RESO Web API Compliant)</h1>
+
+        <h2>Overview</h2>
+        <p>
+          SourceRE supports RESO Web API Add/Edit functionality, enabling
+          authorized partners to create, update, and delete data in
+          participating MLSs. This capability is available only to vendors
+          explicitly approved by each MLS.
+        </p>
+        <p>
+          All Add/Edit operations follow the RESO Add/Edit specification, with
+          extension to support media streaming uploads as outlined in the OData
+          stream property spec, aligning with RESO’s own In-Progress
+          specification for Add/Edit with Media.
+        </p>
+
+        <h2>Authentication</h2>
+        <p>SourceRE uses OAuth 2.0 Client Credentials for Add/Edit access.</p>
+        <p>
+          Before setting up an integration, Add/Edit Partners will log into the
+          SourceRE Vendor portal and access the Add/Edit Feeds. Here they will
+          see their unique client Id and client secret, as well as a list of
+          MLSs who have approved them as an Add/Edit partner, and the available
+          scopes for each MLS. The scopes are strings in the format
+          <code>{MLS Identifier}:{Resource Name}</code> which relate to entity
+          types for a given MLS. The Vendor will use the provided credentials
+          and scopes to generate JWTs which can be used as Bearer tokens in
+          Add/Edit requests to the SourceRE API. The Vendor is encouraged to
+          request only the scopes necessary within the context of a given area
+          of their system. The Vendor may have multiple tokens active at once.
+          Each token may only contain scopes for one MLS.
+        </p>
+
+        <h3>Token Endpoint</h3>
+        <p>
+          <strong>POST to:</strong><br /><code
+            >https://api.sourceredb.com/token</code
+          >
+        </p>
+        <p>
+          <strong>Headers:</strong><br /><code
+            >Content-Type: application/x-www-form-urlencoded</code
+          >
+        </p>
+        <p><strong>Body Example:</strong></p>
+        <pre><code>client_id=your_client_id
+client_secret=your_client_secret
+grant_type=client_credentials
+scope=hivemls:property hivemls:media</code></pre>
+        <p>
+          <strong>Note:</strong> All scopes per a given request must be for the
+          same MLS.
+        </p>
+
+        <h3>Refreshing Tokens</h3>
+        <p>Tokens are valid for 8 hours. Refresh them using:</p>
+        <pre><code>POST to:
+https://api.sourceredb.com/refresh</code></pre>
+        <p>Include your refresh token in the request body.</p>
+
+        <h2>Permissions & Scopes</h2>
+        <p>
+          Each MLS assigns Add/Edit scopes per resource (e.g.
+          <code>hivemls:property</code>). Vendors may only perform Add/Edit
+          operations for resources and fields explicitly permitted by the MLS.
+        </p>
+        <ul>
+          <li>Permissions are record- and field-specific</li>
+          <li>Vendors may be able to read a record but not modify it</li>
+          <li>
+            Unauthorized write attempts result in <code>403 Forbidden</code>
+          </li>
+        </ul>
+
+        <h2>Performing Add/Edit Operations</h2>
+        <p>
+          You may <code>POST</code>, <code>PATCH</code>, or
+          <code>DELETE</code> to standard OData endpoints:
+        </p>
+        <pre><code>https://api.sourceredb.com/OData/{EntityType}</code></pre>
+
+        <h3>Headers</h3>
+        <table border="1" cellpadding="6">
+          <tr>
+            <th>Header</th>
+            <th>Description</th>
+          </tr>
+          <tr>
+            <td>Authorization</td>
+            <td><code>Bearer &lt;access_token&gt;</code></td>
+          </tr>
+          <tr>
+            <td>If-Match</td>
+            <td>
+              Required for updates and deletes, using the resource’s
+              <code>@odata.etag</code>
+            </td>
+          </tr>
+          <tr>
+            <td>Prefer</td>
+            <td>
+              Use <code>return=representation</code> to return the updated
+              entity<br />
+              Use <code>odata.metadata=full</code> to include annotations
+              (recommended)
+            </td>
+          </tr>
+          <tr>
+            <td>Content-Type</td>
+            <td><code>application/json</code> for entity bodies</td>
+          </tr>
+        </table>
+
+        <h3>Example: POST a New Property</h3>
+        <pre><code>POST https://api.sourceredb.com/OData/Property
+
+Request Body:
+{
+  "StandardStatus": "Active",
+  "ListPrice": 350000,
+  "StreetAddress": "123 Main St",
+  "City": "Jamestown",
+  "StateOrProvince": "CO",
+  "PostalCode": "88499"
+}</code></pre>
+
+        <p><strong>Headers:</strong></p>
+        <pre><code>Authorization: Bearer &lt;token&gt;
+Content-Type: application/json
+Prefer: return=representation, odata.metadata=full</code></pre>
+
+        <h3>Response:</h3>
+        <pre><code>{
+  "@odata.etag": "W/\"YmluYXJ5J0FBQUFBQUFCaHlwPSc=\"",
+  "ListingKey": "000000000000000045994159414168114",
+  ...
+}</code></pre>
+        <p>
+          Save the <code>@odata.etag</code> of each response, it must be passed
+          as part of the <code>If-Match</code> header for updates.
+        </p>
+
+        <h3>Example: PATCH an Existing Property</h3>
+        <pre><code>PATCH https://api.sourceredb.com/OData/Property('000000000000000045994159414168114')
+Headers:
+If-Match: W/"YmluYXJ5J0FBQUFBQUFCaHlwPSc="
+Authorization: Bearer &lt;token&gt;
+Prefer: return=representation
+Content-Type: application/json
+
+Body:
+{
+  "ListPrice": 345000
+}</code></pre>
+
+        <h2>Rate Limits</h2>
+        <p>
+          SourceRE’s standard Feed-based rate limits apply for all requests to
+          the Add/Edit API, and further constraints are in place for write
+          (<code>POST</code>, <code>PATCH</code>, and <code>DELETE</code>)
+          requests, which also apply per Feed:
+        </p>
+        <ul>
+          <li>No concurrent requests</li>
+          <li>Maximum 1 write request per second</li>
+          <li>Max 1,000 write requests per hour</li>
+          <li>Max 10 GB uploaded per 24-hour period</li>
+        </ul>
+        <p>
+          Violations result in HTTP <code>429</code> responses. Clients must
+          respect back-off strategies and avoid retry storms.
+        </p>
+
+        <h2>Error Handling</h2>
+        <table border="1" cellpadding="6">
+          <tr>
+            <th>Status Code</th>
+            <th>Meaning</th>
+          </tr>
+          <tr>
+            <td>400</td>
+            <td>
+              Valid request, but validation failed (e.g., wrong enum, missing
+              required field)
+            </td>
+          </tr>
+          <tr>
+            <td>403</td>
+            <td>Attempted to modify unauthorized resource or field</td>
+          </tr>
+          <tr>
+            <td>404</td>
+            <td>Entity not found or not in vendor scope</td>
+          </tr>
+          <tr>
+            <td>409</td>
+            <td>ETag mismatch or concurrent modification</td>
+          </tr>
+          <tr>
+            <td>500</td>
+            <td>Internal error, retry later</td>
+          </tr>
+        </table>
+
+        <h2>Media Uploads (OData Stream Properties)</h2>
+
+        <h3>Overview</h3>
+        <p>Uploading media (photos or documents) involves two steps:</p>
+        <ol>
+          <li>Create a Media record (with metadata)</li>
+          <li>Upload the binary data stream using the edit link</li>
+        </ol>
+
+        <h3>Supported MediaType Values</h3>
+        <table border="1" cellpadding="6">
+          <tr>
+            <th>MediaType</th>
+            <th>Description</th>
+            <th>Allowed Content-Types</th>
+          </tr>
+          <tr>
+            <td>Photo</td>
+            <td>Images</td>
+            <td>image/png, image/jpeg</td>
+          </tr>
+          <tr>
+            <td>Document</td>
+            <td>PDFs</td>
+            <td>application/pdf</td>
+          </tr>
+        </table>
+        <p>
+          <strong>Note:</strong> MLSs may restrict allowed types per vendor.
+        </p>
+
+        <h3>Step 1: Create Media Record</h3>
+        <pre><code>POST https://api.sourceredb.com/OData/Media
+
+Request Body:
+{
+  "MediaType": "Photo",
+  "ResourceName": "Property",
+  "ResourceRecordKey": "000000000000000045994159414168114",
+  "Order": 1
+}</code></pre>
+
+        <h3>Response:</h3>
+        <pre><code>{
+  "@odata.id": "https://api.sourceredb.com/OData/Media(92)",
+  "@odata.editLink": "Media(92)",
+  "@odata.mediaEditLink": "Media(92)/$value",
+  "@odata.etag": "W/\"YmluYXJ5J0FBQUFBQUFCam5NPSc=\"",
+  "MediaStatus": "Incomplete",
+  "MediaKey": 92
+}</code></pre>
+        <p>
+          <strong>Note:</strong> While waiting for the content to be posted, the
+          Media record will be of MediaStatus “Incomplete”. Only records with a
+          MediaStatus of “Complete” will be shown in any MLS Feeds aside from
+          the current Add/Edit Feed.
+        </p>
+
+        <h3>Step 2: Upload Media Content</h3>
+        <pre><code>POST https://api.sourceredb.com/OData/Media(92)/$value
+Headers:
+Authorization: Bearer &lt;token&gt;
+Content-Type: image/png
+
+Body: Raw binary stream (e.g., PNG or JPEG)</code></pre>
+        <p><strong>Response:</strong> 200 OK</p>
+        <p>
+          After a successful content upload, the MediaStatus will transition to
+          “Processing” and then to “Complete”. Records which are complete may
+          have their content updated using the <code>mediaEditLink</code>, which
+          will cause them to transition to “Processing” again. If the content
+          cannot be processed, the MediaStatus will transition to “Rejected” and
+          a <code>MediaStatusDescription</code> field will be applied to the
+          record listing the reason for rejection. The record will then have the
+          <code>DeletedInSource</code> flag applied.
+        </p>
+
+        <h2>Validation Notes</h2>
+        <ul>
+          <li>
+            You must POST media within one hour after creating the Media record,
+            otherwise the MediaStatus will transition to “Rejected” and the
+            Media record will be deleted (first through application of the
+            <code>DeletedInSource</code> flag, then through removal).
+          </li>
+          <li>
+            SourceRE places a <strong>1MB size limit</strong> on uploaded files.
+            If a Vendor needs to upload larger images or documents and cannot
+            fit the requirement using image compression, they should reach out
+            to SourceRE’s API support team.
+          </li>
+          <li>
+            MLSs may enforce:
+            <ul>
+              <li>MediaType and Content Type restrictions</li>
+              <li>Total media count limit per record</li>
+            </ul>
+          </li>
+        </ul>
+
+        <h2>Best Practices</h2>
+        <ul>
+          <li>
+            Always use the latest <code>@odata.etag</code> in the
+            <code>If-Match</code> header when updating records. It is not
+            applicable for Media uploads.
+          </li>
+          <li>
+            Use <code>Prefer: odata.metadata=full</code> to debug errors during
+            development
+          </li>
+          <li>
+            Contact the MLS if receiving <code>403</code> errors — permissions
+            are MLS-controlled
+          </li>
+          <li>
+            Retry temporary failures (<code>500/503</code>) with exponential
+            backoff
+          </li>
+          <li>
+            Pull updated metadata from <code>$metadata</code> if field
+            definitions change
+          </li>
+        </ul>
+
+        <h2>Questions?</h2>
+        <p>📧 <strong>api-support@sourceredb.com</strong></p>
+      </div>
+    </main>
+
+    <script>
+      const tabs = document.querySelectorAll("nav span");
+      const contents = document.querySelectorAll(".tab-content");
+
+      tabs.forEach((tab) => {
+        tab.addEventListener("click", () => {
+          tabs.forEach((t) => t.classList.remove("active"));
+          contents.forEach((c) => c.classList.remove("active"));
+
+          tab.classList.add("active");
+          document.getElementById(tab.dataset.tab).classList.add("active");
+        });
+      });
+    </script>
+  </body>
+</html>
