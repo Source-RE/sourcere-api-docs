@@ -283,9 +283,9 @@
 
         <h2>Batch Pulls</h2>
         <p>
-          To optimize replication, SourceRE supports pulling larger batches of
-          records (up to 100,000) when only the primary key field is selected.
-          For example:
+          To facilitate reconiliation of primary keys during replication,
+          SourceRE supports pulling larger batches of records (up to 100,000)
+          when only the primary key field is selected. For example:
         </p>
         <pre><code>$select=ListingKey&$top=100000</code></pre>
 
