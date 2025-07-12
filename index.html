@@ -141,26 +141,27 @@
       <div id="webapi" class="tab-content active">
         <h1>SourceRE RESO Web API</h1>
 
-        <h2>Overview</h2>
+        <h2>Overview & Access</h2>
         <p>
-          SourceRE is a RESO Web API-compliant platform designed for real estate
-          software vendors to access standardized MLS data feeds. It enables
-          vendors to purchase access to MLS data based on MLS-defined Plans,
-          which are provisioned for the vendor's specific Products. Each feed is
-          unique to an MLS + Product combination and comes with its own
-          permanent JWT Bearer Token.
+          SourceRE is a platform designed for real estate software vendors to
+          access standardized data feeds. It enables vendors to purchase access
+          to MLS data based on Plans defined by the MLS, which are provisioned
+          for the vendor's specific Products. When a vendor purchases a Plan for
+          one of their Products, they receive an API feed. Feeds are accessed
+          via feed-specific JWT bearer tokens. Each token is active for 1 year,
+          and a new token can be retrieved at any time by pressing "Copy Bearer
+          Token" on the feed within the Data Marketplace.
         </p>
         <p>
-          Data access, structure, and enumerations are tailored per MLS. Every
-          Feed reflects its MLS’s specific metadata, field-level permissions,
-          and record-level access rules, ensuring MLSs retain granular control
-          over how their data is consumed.
+          Data access, structure, and enumerations are tailored per Plan. Every
+          Feed reflects its Plan's specific metadata, field-level permissions,
+          and record-level access rules, ensuring Data Providers retain granular
+          control over how their data is consumed.
         </p>
 
         <h2>Authentication</h2>
         <p>
-          Each Feed is associated with a dedicated Bearer token, issued upon
-          purchase of a Plan for a Product. This token must be included in the
+          The JWT bearer token must be included in the
           <code>Authorization</code> header for all API requests:
         </p>
         <pre><code>Authorization: Bearer &lt;your_token&gt;</code></pre>
@@ -220,11 +221,6 @@
           </li>
         </ul>
         <pre><code>GET /OData/Property?$expand=Rooms</code></pre>
-        <p>
-          MLS-specific property extensions will be exposed as a resource such as
-          <code>PropertyCustom</code>, which may be expanded via
-          <code>$expand=Custom</code>.
-        </p>
 
         <h2>Plans-Based Permissions</h2>
         <p>
@@ -307,11 +303,14 @@
         <p>Clients must replicate feed data locally. SourceRE recommends:</p>
         <ul>
           <li>Request data using the entity endpoint</li>
-          <li>Follow <code>@odata.nextLink</code> until complete</li>
+          <li>
+            Follow <code>@odata.nextLink</code> until the `value` array of the
+            response is empty.
+          </li>
           <li>
             If interrupted, resume using:
             <code
-              >$filter=APIModificationTimestamp gt
+              >$filter=ModificationTimestamp gt
               &lt;last_successful_timestamp&gt;</code
             >
           </li>
@@ -430,7 +429,7 @@
     "EventType": "Update",
     "EventTimestamp": "2025-05-09T14:35:21.000Z",
     "ResourceRecordKey": "fe3d9ae1a9734db29e8e-5ac85d2f5f1f",
-    "APIModificationTimestamp": "2025-02-01T14:35:20.000Z",
+    "ModificationTimestamp": "2025-02-01T14:35:20.000Z",
     "PlansEnabled": ["IDX", "VOW"],
     "DeletedInSource": false
   }
@@ -448,8 +447,8 @@
             (ISO 8601)
           </li>
           <li>
-            <strong>APIModificationTimestamp</strong> – Time the entity was last
-            modified in SourceRE
+            <strong>ModificationTimestamp</strong> – Time the entity was last
+            modified in the data source.
           </li>
           <li>
             <strong>ResourceRecordKey</strong> – Primary key for the record
@@ -490,8 +489,8 @@
         <p>You should:</p>
         <ul>
           <li>
-            Track (ResourceName + ResourceRecordKey + APIModificationTimestamp)
-            for deduplication
+            Track (ResourceName + ResourceRecordKey + ModificationTimestamp) for
+            deduplication
           </li>
           <li>
             Pull records using the Web API as needed (webhooks notify only)
