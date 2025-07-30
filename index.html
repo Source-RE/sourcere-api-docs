@@ -5,7 +5,81 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>SourceRE API Documentation</title>
     <style>
-      /* style code like code-block */
+      #section-nav {
+        position: fixed;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: flex-start;
+        top: 0;
+        left: 0;
+        width: 240px;
+        height: 100vh;
+        background: #ffffff;
+        padding: 0;
+        margin: 0;
+        border-right: 1px solid #eee;
+        box-shadow: none;
+        z-index: 100;
+        overflow-y: auto;
+      }
+
+      /* this is showing up too low */
+      #section-nav nav {
+        background: #ffffff;
+        width: 240px;
+        height: 100%;
+        list-style: none;
+        padding: 0 !important;
+        margin: 0 !important;
+      }
+
+      #section-nav nav ul {
+        width: 240px;
+        list-style: none;
+        padding: 0 !important;
+        margin: 0 !important;
+      }
+
+      html {
+        scroll-padding-top: 60px;
+        scroll-behavior: smooth;
+      }
+
+      #section-nav nav ul li {
+        width: 240px;
+        margin: 0 !important;
+        padding: 0 !important;
+      }
+
+      #section-nav nav ul li a {
+        display: block;
+        padding: 16px 20px;
+        color: #000000;
+        font-size: 15px;
+        font-weight: 500;
+        text-decoration: none;
+        background: #ffffff;
+        border-top: 1px solid #f0f0f0;
+      }
+
+      #section-nav nav ul li:first-child a {
+        border-top: none;
+      }
+
+      #section-nav nav ul li a:hover {
+        background-color: #f7f7f7;
+      }
+
+      #section-nav nav ul li a.active {
+        background-color: #f0f0f0;
+        font-weight: 600;
+      }
+
+      body {
+        margin-left: 240px;
+      }
+
       code {
         background: #f5f4f4;
         color: #000000;
@@ -59,31 +133,6 @@
         align-items: center;
         font-weight: 600;
         font-size: 1.2rem;
-      }
-      nav {
-        display: flex;
-        align-content: center;
-        align-items: center;
-        justify-items: center;
-        justify-content: center;
-        text-align: center;
-        border: 2px solid #6307a6;
-      }
-      nav span {
-        cursor: pointer;
-        padding: 0.5rem 1rem;
-        border-left: 2px solid #6307a6;
-        color: #6307a6;
-        font-weight: 600;
-        background-color: #fff;
-        width: 140px;
-      }
-      nav span:first-child {
-        border-left: none;
-      }
-      nav span.active {
-        background-color: #6707ab;
-        color: #fff;
       }
       main {
         padding: 2rem;
@@ -140,8 +189,8 @@
         padding: 8px 12px;
         text-align: left;
       }
-      ul,
-      ol {
+      main ul,
+      main ol {
         padding-left: 1.5rem;
         margin-top: 0.5rem;
         margin-bottom: 1.5rem;
@@ -159,323 +208,361 @@
         API DOCUMENTATION
       </div>
     </header>
-
-    <main>
-      <div id="webapi" class="tab-content active">
-        <h1>SourceRE RESO Web API</h1>
-
-        <h2>Overview</h2>
-        <p>
-          SourceRE is a platform designed for real estate software vendors to
-          access standardized data feeds. It enables vendors to purchase access
-          to MLS data based on Plans defined by the MLS, which are provisioned
-          for the vendor's specific Products. When a vendor purchases a Plan for
-          one of their Products, they receive an API feed. Feeds are accessed
-          via feed-specific JWT bearer tokens. Each token is active for 1 year,
-          and a new token can be retrieved at any time by pressing "Copy Bearer
-          Token" on the feed within the Data Marketplace.
-        </p>
-        <p>
-          Data access, structure, and enumerations are tailored per Plan. Every
-          Feed reflects its Plan's specific metadata, field-level permissions,
-          and record-level access rules, ensuring the MLS retains granular
-          control over how its data is consumed.
-        </p>
-        <p>
-          MLS Data is available via the SourceRE RESO Web API, and it is
-          standardized according to the RESO Data Dictionary. For more
-          information about the RESO Web API specification, please visit the
-          <a href="https://www.reso.org/reso-web-api/" target="_blank"
-            >RESO Website</a
-          >. A guide to authenicating, querying, and replicating data from the
-          SourceRE RESO Web API is provided below.
-        </p>
-
-        <h2>Authentication</h2>
-        <p>
-          The JWT bearer token must be included in the
-          <code>Authorization</code> header for all API requests.
-        </p>
-        <div class="code-block">Authorization: Bearer &lt;your_token&gt;</div>
-        <p>
-          These tokens are long-lived and should be stored securely. Tokens are
-          scoped to a specific Feed and can only access data from that feed.
-        </p>
-
-        <h2>Metadata & Lookups</h2>
-        <p>
-          SourceRE provides metadata discovery in accordance with the RESO Web
-          API standard:
-        </p>
-        <h4>Service Endpoint</h4>
-        <div class="code-block">GET https://api.sourceredb.com/odata/</div>
-        <p>
-          Describes the available entity types (resources) for the given feed.
-        </p>
-        <h4>Metadata Endpoint</h4>
-        <div class="code-block">
-          GET https://api.sourceredb.com/odata/$metadata
-        </div>
-        <p>
-          Describes the available fields for each entity type, including
-          navigation properties.
-        </p>
-        <p>
-          Enumeration fields in the metadata are typed as
-          <code>Edm.String</code> or <code>Collection(Edm.String)</code> and
-          include a <code>RESO.OData.Metadata.LookupName</code> annotation
-          identifying the Lookup name. For example, the
-          <code>PropertyType</code> field has the following annotation:
-        </p>
-        <div class="code-block">
-          &lt;Annotation Term="RESO.OData.Metadata.LookupName"
-          String="PropertyType" /&gt;
-        </div>
-        <h4>Lookup Endpoint</h4>
-        <div class="code-block">
-          GET https://api.sourceredb.com/odata/Lookup?$filter=LookupName eq
-          'PropertyType'
-        </div>
-        <p>
-          Returns enumeration values for fields annotated with
-          <code>RESO.OData.Metadata.LookupName</code>, according to the RESO Web
-          API specification.
-        </p>
-
-        <h2>Data Access and Structure</h2>
-        <h3>Endpoints</h3>
-        <p>
-          All entity types are exposed as OData resources at their corresponding
-          endpoint:
-        </p>
-        <div class="code-block">
-          https://api.sourceredb.com/odata/{EntityType}
-        </div>
-        <p>
-          These endpoints support OData query options as defined in the RESO Web
-          API specification. Here is a brief overview of the available query
-          options:
-        </p>
-        <ul>
-          <li>
-            <code>$expand</code> - Expand related entities from another resource
-          </li>
-          <li><code>$filter</code> - Filter records based on field values</li>
-          <li>
-            <code>$orderby</code> - Sort results by field values, ascending or
-            descending
-          </li>
-          <li>
-            <code>$top</code> - Limit results to a specific number of records
-          </li>
-          <li>
-            <code>$skip</code> - Skip a specific number of records in the
-            resulting set
-          </li>
-          <li><code>$count</code> - Include count of resulting records</li>
-          <li>
-            <code>$select</code> - Select specific fields to include in the
-            response
-          </li>
+    <aside
+      id="section-nav"
+      style="
+        position: fixed;
+        top: 50px;
+        left: 0;
+        width: 200px;
+        padding: 1rem;
+        background: #f9f9f9;
+        border-right: 1px solid #ddd;
+        height: calc(100% - 60px);
+        overflow-y: auto;
+      "
+    >
+      <nav>
+        <ul id="section-list" style="list-style: none; padding: 0; margin: 0">
+          <!-- dynamically populated -->
         </ul>
-        <p>
-          For example, here is a query to the Property resource which makes use
-          of each query option:
-        </p>
-        <div class="code-block">
-          GET
-          https://api.sourceredb.com/odata/Property?$expand=ListAgent&$filter=PropertyType
-          eq 'Residential'&$orderby=APIModificationTimestamp
-          desc&$top=100&$skip=100&$count=true&$select=APIModificationTimestamp,PropertyType
-        </div>
-        <p>
-          This query will return 100 residential properties, sorting by the
-          APIModificationTimestamp field in descending order and skipping the
-          first 100 properties. The response will include an
-          <code>@odata.count</code> of resulting records, and each record will
-          include the <code>APIModificationTimestamp</code> and
-          <code>PropertyType</code> fields, as well as the
-          <code>ListAgent</code> navigation property.
-        </p>
+      </nav>
+    </aside>
+    <div style="margin-left: 240px">
+      <main>
+        <div id="webapi" class="tab-content active">
+          <h1>SourceRE RESO Web API</h1>
 
-        <h3>Sub-Resources</h3>
-        <p>
-          Certain entity types are scoped to a single parent resource, and are
-          exposed as top-level resources with a prefix of the parent, in
-          addition to being available as navigation properties. For example,
-          individual rooms associated with a property are exposed as the
-          <code>PropertyRooms</code> resource, in addition to being available as
-          the <code>Rooms</code> navigation on the
-          <code>Property</code> resource:
-        </p>
-        <div class="code-block">
-          GET https://api.sourceredb.com/odata/Property?$expand=Rooms
-        </div>
+          <h2>Overview</h2>
+          <p>
+            SourceRE is a platform designed for real estate software vendors to
+            access standardized data feeds. It enables vendors to purchase
+            access to MLS data based on Plans defined by the MLS, which are
+            provisioned for the vendor's specific Products. When a vendor
+            purchases a Plan for one of their Products, they receive an API
+            feed. Feeds are accessed via feed-specific JWT bearer tokens. Each
+            token is active for 1 year, and a new token can be retrieved at any
+            time by pressing "Copy Bearer Token" on the feed within the Data
+            Marketplace.
+          </p>
+          <p>
+            Data access, structure, and enumerations are tailored per Plan.
+            Every Feed reflects its Plan's specific metadata, field-level
+            permissions, and record-level access rules, ensuring the MLS retains
+            granular control over how its data is consumed.
+          </p>
+          <p>
+            MLS Data is available via the SourceRE RESO Web API, and it is
+            standardized according to the RESO Data Dictionary. For more
+            information about the RESO Web API specification, please visit the
+            <a href="https://www.reso.org/reso-web-api/" target="_blank"
+              >RESO Website</a
+            >. A guide to authenicating, querying, and replicating data from the
+            SourceRE RESO Web API is provided below.
+          </p>
 
-        <h2>Plans-Based Permissions</h2>
-        <p>
-          Each record includes a <code>PermittedUse</code> array field listing
-          which usages are permitted for that record. This lets clients
-          determine the context in which a record can be displayed or processed.
-          For example, a record with a <code>PermittedUse</code> array of
-          <code>["Public"]</code>.
-        </p>
-        <p>Other usage-related fields may include:</p>
-        <ul>
-          <li>Fields prefixed with <code>IDX</code> or <code>VOW</code></li>
-          <li>
-            <code>SyndicateTo</code> – Enumerated field indicating syndication
-            channels
-          </li>
-        </ul>
+          <h2>Authentication</h2>
+          <p>
+            The JWT bearer token must be included in the
+            <code>Authorization</code> header for all API requests.
+          </p>
+          <div class="code-block">Authorization: Bearer &lt;your_token&gt;</div>
+          <p>
+            These tokens are long-lived and should be stored securely. Tokens
+            are scoped to a specific Feed and can only access data from that
+            feed.
+          </p>
 
-        <h2>Field & Record-Level Restrictions</h2>
-        <p>
-          Permissions are defined per Plan by the MLS and enforced
-          automatically. This may include:
-        </p>
-        <ul>
-          <li>Which fields are included</li>
-          <li>Which records are visible</li>
-        </ul>
+          <h2>Metadata & Lookups</h2>
+          <p>
+            SourceRE provides metadata discovery in accordance with the RESO Web
+            API standard:
+          </p>
+          <h4>Service Endpoint</h4>
+          <div class="code-block">GET https://api.sourceredb.com/odata/</div>
+          <p>
+            Describes the available entity types (resources) for the given feed.
+          </p>
+          <h4>Metadata Endpoint</h4>
+          <div class="code-block">
+            GET https://api.sourceredb.com/odata/$metadata
+          </div>
+          <p>
+            Describes the available fields for each entity type, including
+            navigation properties.
+          </p>
+          <p>
+            Enumeration fields in the metadata are typed as
+            <code>Edm.String</code> or <code>Collection(Edm.String)</code> and
+            include a <code>RESO.OData.Metadata.LookupName</code> annotation
+            identifying the Lookup name. For example, the
+            <code>PropertyType</code> field has the following annotation:
+          </p>
+          <div class="code-block">
+            &lt;Annotation Term="RESO.OData.Metadata.LookupName"
+            String="PropertyType" /&gt;
+          </div>
+          <h4>Lookup Endpoint</h4>
+          <div class="code-block">
+            GET https://api.sourceredb.com/odata/Lookup?$filter=LookupName eq
+            'PropertyType'
+          </div>
+          <p>
+            Returns enumeration values for fields annotated with
+            <code>RESO.OData.Metadata.LookupName</code>, according to the RESO
+            Web API specification.
+          </p>
 
-        <h2>Pagination & Filtering</h2>
-        <h3>Pagination</h3>
-        <p>
-          All endpoints support pagination via
-          <code>@odata.nextLink</code>. This is a URL returned in the response
-          that can be used to retrieve the next page of results. If any query
-          options are passed, such as <code>$top</code> or <code>$filter</code>,
-          they will be accounted for in the nextLink URL.
-        </p>
-        <p>
-          If no $top value is passed, the default page size will be 10 records.
-          The maximum value for $top is 1000, unless only the primary key of the
-          resource is selected, in which case the maximum value is 100,000. For
-          example:
-        </p>
-        <div class="code-block">
-          https://api.sourceredb.com/odata/Property?$select=ListingKey&$top=100000
-        </div>
+          <h2>Data Access and Structure</h2>
+          <h3>Endpoints</h3>
+          <p>
+            All entity types are exposed as OData resources at their
+            corresponding endpoint:
+          </p>
+          <div class="code-block">
+            https://api.sourceredb.com/odata/{EntityType}
+          </div>
+          <p>
+            These endpoints support OData query options as defined in the RESO
+            Web API specification. Here is a brief overview of the available
+            query options:
+          </p>
+          <ul>
+            <li>
+              <code>$expand</code> - Expand related entities from another
+              resource
+            </li>
+            <li><code>$filter</code> - Filter records based on field values</li>
+            <li>
+              <code>$orderby</code> - Sort results by field values, ascending or
+              descending
+            </li>
+            <li>
+              <code>$top</code> - Limit results to a specific number of records
+            </li>
+            <li>
+              <code>$skip</code> - Skip a specific number of records in the
+              resulting set
+            </li>
+            <li><code>$count</code> - Include count of resulting records</li>
+            <li>
+              <code>$select</code> - Select specific fields to include in the
+              response
+            </li>
+          </ul>
+          <p>
+            For example, here is a query to the Property resource which makes
+            use of each query option:
+          </p>
+          <div class="code-block">
+            GET
+            https://api.sourceredb.com/odata/Property?$expand=ListAgent&$filter=PropertyType
+            eq 'Residential'&$orderby=APIModificationTimestamp
+            desc&$top=100&$skip=100&$count=true&$select=APIModificationTimestamp,PropertyType
+          </div>
+          <p>
+            This query will return 100 residential properties, sorting by the
+            APIModificationTimestamp field in descending order and skipping the
+            first 100 properties. The response will include an
+            <code>@odata.count</code> of resulting records, and each record will
+            include the <code>APIModificationTimestamp</code> and
+            <code>PropertyType</code> fields, as well as the
+            <code>ListAgent</code> navigation property.
+          </p>
 
-        <h3>Filtering</h3>
-        <p>
-          OData filters are supported on all fields. The operators available may
-          differ based on the field type. Here are some examples:
-        </p>
-        <div class="code-block">
-          https://api.sourceredb.com/odata/Property?$filter=Appliances eq
-          'Refrigerator'
-        </div>
-        <p>With bounds:</p>
-        <div class="code-block">
-          https://api.sourceredb.com/odata/Property?$filter=BathroomsTotalInteger
-          gt 0 and BathroomsTotalInteger lt 3
-        </div>
+          <h3>Sub-Resources</h3>
+          <p>
+            Certain entity types are scoped to a single parent resource, and are
+            exposed as top-level resources with a prefix of the parent, in
+            addition to being available as navigation properties. For example,
+            individual rooms associated with a property are exposed as the
+            <code>PropertyRooms</code> resource, in addition to being available
+            as the <code>Rooms</code> navigation on the
+            <code>Property</code> resource:
+          </p>
+          <div class="code-block">
+            GET https://api.sourceredb.com/odata/Property?$expand=Rooms
+          </div>
 
-        <h2>Updated Records</h2>
-        <p>
-          The ModificationTimestamp indicates the time in UTC at which the
-          record was last updated in the MLS source system. The
-          APIModificationTimestamp indicates the time in UTC at which the record
-          was last updated in SourceRE.
-        </p>
-        <div class="code-block">
-          { "ModificationTimestamp": "2025-04-01T12:34:56Z",
-          "APIModificationTimestamp": "2025-04-01T12:39:49Z" }
-        </div>
+          <!-- <h2>Plans-Based Permissions</h2>
+          <p>
+            Each record includes a <code>PermittedUse</code> array field listing
+            which usages are permitted for that record. This lets clients
+            determine the context in which a record can be displayed or
+            processed. For example, a record with a
+            <code>PermittedUse</code> array of <code>["Public"]</code>.
+          </p>
+          <p>Other usage-related fields may include:</p>
+          <ul>
+            <li>Fields prefixed with <code>IDX</code> or <code>VOW</code></li>
+            <li>
+              <code>SyndicateTo</code> – Enumerated field indicating syndication
+              channels
+            </li>
+          </ul> -->
 
-        <h2>Deleted Records</h2>
-        <p>Deleted records appear for 10 days after deletion with:</p>
-        <div class="code-block">
-          { "DeletedInSource": true, "DeletionTimestamp": "2025-04-01T12:34:56Z"
-          }
-        </div>
-        <p>
-          Updates to the DeletionTimestamp will also coincide with updates to
-          the APIModificationTimestamp field. If a client stops pulling records
-          for 10 days or longer, they must reconcile deletions for a resource
-          using the following process:
-        </p>
-        <ul>
-          <li>Pull all primary keys for the resource</li>
-          <li>Compare against the primary keys in their local system</li>
-          <li>
-            Purge records from their local system whose keys are no longer found
-            in SourceRE
-          </li>
-        </ul>
+          <h2>Field & Record-Level Restrictions</h2>
+          <p>
+            Permissions are defined per Plan by the MLS and enforced
+            automatically. This may include:
+          </p>
+          <ul>
+            <li>Which fields are included</li>
+            <li>Which records are visible</li>
+          </ul>
+          <p>
+            The MLS may also define display and usage restrictions for specific
+            fields and entities. Clients must consult the MLS for display and
+            usage guidelines.
+          </p>
 
-        <h2>Replication</h2>
-        <h3>Initial Bulk Load</h3>
-        <p>
-          Clients must replicate feed data locally. SourceRE recommends the
-          following strategy for each parent resource you wish to replicate:
-        </p>
-        <ul>
-          <li>
-            Request data using the resource endpoint, including any $filter and
-            $select options you wish to use, as well as $expand for any
-            sub-resources you wish to replicate (e.g. $expand=Rooms).
-          </li>
-          <li>
-            Follow <code>@odata.nextLink</code> until it no longer appears in
-            the response.
-          </li>
-          <li>If interrupted, restart replication from the beginning.</li>
-          <!-- <li>
+          <h2>Pagination & Filtering</h2>
+          <h3>Pagination</h3>
+          <p>
+            All endpoints support pagination via
+            <code>@odata.nextLink</code>. This is a URL returned in the response
+            that can be used to retrieve the next page of results. If any query
+            options are passed, such as <code>$top</code> or
+            <code>$filter</code>, they will be accounted for in the nextLink
+            URL.
+          </p>
+          <p>
+            If no $top value is passed, the default page size will be 10
+            records. The maximum value for $top is 1000, unless only the primary
+            key of the resource is selected, in which case the maximum value is
+            100,000. For example:
+          </p>
+          <div class="code-block">
+            https://api.sourceredb.com/odata/Property?$select=ListingKey&$top=100000
+          </div>
+
+          <h3>Filtering</h3>
+          <p>
+            OData filters are supported on all fields. The operators available
+            may differ based on the field type. Here are some examples:
+          </p>
+          <div class="code-block">
+            https://api.sourceredb.com/odata/Property?$filter=Appliances eq
+            'Refrigerator'
+          </div>
+          <p>With bounds:</p>
+          <div class="code-block">
+            https://api.sourceredb.com/odata/Property?$filter=BathroomsTotalInteger
+            gt 0 and BathroomsTotalInteger lt 3
+          </div>
+
+          <h2>Updated Records</h2>
+          <p>
+            The ModificationTimestamp indicates the time in UTC at which the
+            record was last updated in the MLS source system. The
+            APIModificationTimestamp indicates the time in UTC at which the
+            record was last updated in SourceRE.
+          </p>
+          <div class="code-block">
+            { "ModificationTimestamp": "2025-04-01T12:34:56Z",
+            "APIModificationTimestamp": "2025-04-01T12:39:49Z" }
+          </div>
+
+          <h2>Deleted Records</h2>
+          <p>Deleted records appear for 10 days after deletion with:</p>
+          <div class="code-block">
+            { "DeletedInSource": true, "DeletionTimestamp":
+            "2025-04-01T12:34:56Z" }
+          </div>
+          <p>
+            Updates to the DeletionTimestamp will also coincide with updates to
+            the APIModificationTimestamp field. If a client stops pulling
+            records for 10 days or longer, they must reconcile deletions for a
+            resource using the following process:
+          </p>
+          <ul>
+            <li>Pull all primary keys for the resource</li>
+            <li>Compare against the primary keys in their local system</li>
+            <li>
+              Purge records from their local system whose keys are no longer
+              found in SourceRE
+            </li>
+          </ul>
+
+          <h2>Replication</h2>
+          <h3>Initial Bulk Load</h3>
+          <p>
+            Clients must replicate feed data locally. SourceRE recommends the
+            following strategy for each parent resource you wish to replicate:
+          </p>
+          <ul>
+            <li>
+              Request data using the resource endpoint, including any $filter
+              and $select options you wish to use, as well as $expand for any
+              sub-resources you wish to replicate (e.g. $expand=Rooms).
+            </li>
+            <li>
+              Follow <code>@odata.nextLink</code> until it no longer appears in
+              the response.
+            </li>
+            <li>If interrupted, restart replication from the beginning.</li>
+            <!-- <li>
             If interrupted, resume using:
             <code
               >$filter=APIModificationTimestamp gt
               &lt;last_successful_timestamp&gt;</code
             >
           </li> -->
-        </ul>
+          </ul>
 
-        <h3>Ongoing Updates</h3>
-        <p>
-          After replicating the entire dataset as required, poll for new/updated
-          records using <code>APIModificationTimestamp</code> filters. Start
-          with the newest APIModificationTimestamp value you have in your local
-          system, and continue pulling until you have caught up to the current
-          APIModificationTimestamp value in SourceRE. We recommend a filter
-          window of no larger than 1 hour. For example:
-        </p>
-        <div class="code-block">
-          $filter=APIModificationTimestamp gt 2025-05-07T00:00:00Z and
-          APIModificationTimestamp lt 2025-05-07T01:00:00Z
+          <h3>Ongoing Updates</h3>
+          <p>
+            After replicating the entire dataset as required, poll for
+            new/updated records using
+            <code>APIModificationTimestamp</code> filters. Start with the newest
+            APIModificationTimestamp value you have in your local system, and
+            continue pulling until you have caught up to the current
+            APIModificationTimestamp value in SourceRE. We recommend a filter
+            window of no larger than 1 hour. For example:
+          </p>
+          <div class="code-block">
+            $filter=APIModificationTimestamp gt 2025-05-07T00:00:00Z and
+            APIModificationTimestamp lt 2025-05-07T01:00:00Z
+          </div>
+          <p>
+            Pull metadata and lookup updates no more than once per day. We
+            recommend refreshing other data at least once per hour. Within
+            SourceRE, data updates will occur in 10-minute intervals.
+          </p>
+
+          <h3>Media</h3>
+          <p>
+            The <code>Media</code> resource contains a MediaURL pointing to
+            hosted images and documents. Media can be replicated as a top level
+            resource and as a navigation property on several resources,
+            including: Property, Office, Member, Team, and OpenHouse.
+          </p>
+          <p>
+            <strong>Important:</strong> For photos and documents, do not hotlink
+            MediaURLs in production. Always replicate these media types to your
+            own servers.
+          </p>
+
+          <h2>Rate Limits</h2>
+          <p>
+            Unless otherwise noted, the following rate limits apply
+            <em>per Feed</em>:
+          </p>
+          <ul>
+            <li>No concurrent requests</li>
+            <li>Max 3 requests per second</li>
+            <li>Max 5,000 requests per hour</li>
+          </ul>
+          <!-- a more standard backoff strategy? -->
+          <p>Violations result in HTTP <code>429</code> responses.</p>
+          <div style="height: 100px"></div>
+          <p>
+            For assistance, contact: <strong>support@sourceredb.com</strong>
+          </p>
+          <div style="height: 500px"></div>
         </div>
-        <p>
-          Pull metadata and lookup updates no more than once per day. We
-          recommend refreshing other data at least once per hour. Within
-          SourceRE, data updates will occur in 10-minute intervals.
-        </p>
-
-        <h2>Media Handling</h2>
-        <p>
-          The <code>Media</code> resource contains URLs pointing to hosted
-          images and documents.
-        </p>
-        <p>
-          <strong>Important:</strong> Do not hotlink these URLs in production.
-          Always replicate the media files to your own servers.
-        </p>
-
-        <h2>Rate Limits</h2>
-        <p>
-          Unless otherwise noted, the following rate limits apply
-          <em>per Feed</em>:
-        </p>
-        <ul>
-          <li>No concurrent requests</li>
-          <li>Max 3 requests per second</li>
-          <li>Max 5,000 requests per hour</li>
-        </ul>
-        <!-- a more standard backoff strategy? -->
-        <p>Violations result in HTTP <code>429</code> responses.</p>
-        <p>For assistance, contact: <strong>support@sourceredb.com</strong></p>
-      </div>
-    </main>
+      </main>
+    </div>
 
     <script>
       const tabs = document.querySelectorAll("nav span");
@@ -489,6 +576,46 @@
           tab.classList.add("active");
           document.getElementById(tab.dataset.tab).classList.add("active");
         });
+      });
+      document.addEventListener("DOMContentLoaded", () => {
+        const headings = document.querySelectorAll("main h2");
+        const navList = document.getElementById("section-list");
+
+        headings.forEach((heading, index) => {
+          const id = heading.id || `section-${index}`;
+          heading.id = id;
+
+          const li = document.createElement("li");
+          const link = document.createElement("a");
+          link.href = `#${id}`;
+          link.textContent = heading.textContent;
+          li.appendChild(link);
+          navList.appendChild(li);
+        });
+
+        const navLinks = document.querySelectorAll("#section-list a");
+
+        function highlightNav() {
+          let scrollPos =
+            document.documentElement.scrollTop || document.body.scrollTop;
+          let currentId = "";
+
+          headings.forEach((h2) => {
+            const offset = h2.offsetTop - 60; // adjust for header height
+            if (scrollPos >= offset) {
+              currentId = h2.id;
+            }
+          });
+
+          navLinks.forEach((link) => {
+            link.classList.toggle(
+              "active",
+              link.getAttribute("href") === `#${currentId}`
+            );
+          });
+        }
+
+        window.addEventListener("scroll", highlightNav);
       });
     </script>
   </body>
