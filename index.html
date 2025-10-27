@@ -1486,8 +1486,16 @@
           
           // Update URL based on tab
           const path = tabId === 'webapi' ? '/sourcere/' : '/arello-api/';
-          const newUrl = window.location.origin + path;
-          window.history.pushState({ tab: tabId }, '', newUrl);
+          const hash = tabId === 'webapi' ? '#sourcere' : '#arello-api';
+          
+          try {
+            // Try path-based routing first (for http:// protocol)
+            const newUrl = window.location.origin + path;
+            window.history.pushState({ tab: tabId }, '', newUrl);
+          } catch (e) {
+            // Fallback to hash-based routing (for file:// protocol or if pushState fails)
+            window.location.hash = hash;
+          }
           
           // Update section navigation
           setTimeout(updateSectionNav, 10);
@@ -1497,11 +1505,22 @@
       // Function to get tab from URL path
       function getTabFromPath() {
         const path = window.location.pathname;
+        const hash = window.location.hash;
+        
+        // Check for hash-based routing (works for both file:// and http:// protocols)
+        if (hash === '#arello-api' || hash === '#arello') {
+          return 'arello';
+        } else if (hash === '#sourcere' || hash === '#webapi') {
+          return 'webapi';
+        }
+        
+        // Check for path-based routing (for http:// protocol)
         if (path.includes('/arello-api/')) {
           return 'arello';
         } else if (path.includes('/sourcere/')) {
           return 'webapi';
         }
+        
         return 'webapi'; // default to SourceRE
       }
 
@@ -1518,6 +1537,11 @@
         } else {
           initializeTab();
         }
+      });
+
+      // Handle hash changes for file:// protocol
+      window.addEventListener('hashchange', () => {
+        initializeTab();
       });
 
       tabs.forEach((tab) => {
