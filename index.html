@@ -226,7 +226,7 @@
       </div>
       <nav class="tabs">
         <span class="tab active" data-tab="webapi">SourceRE</span>
-        <span class="tab" data-tab="arello">ARELLO LVWS</span>
+        <span class="tab" data-tab="arello">ARELLO API</span>
       </nav>
     </header>
     <aside
@@ -599,7 +599,7 @@
           <div style="height: 650px"></div>
         </div>
         <div id="arello" class="tab-content">
-          <h1>ARELLO.COM Licensee Verification Web Service via SourceRE</h1>
+          <h1>ARELLO API via SourceRE</h1>
           <p><em>Last Revision: 10/26/2025</em></p>
 
           <h2>Table of Contents</h2>
@@ -630,16 +630,17 @@
 
           <h2 id="introduction">Introduction</h2>
           <p>
-            The ARELLO.COM Licensee Verification Web Service allows clients to
-            obtain real estate licensee information in an automated fashion via
-            a single HTTP request. When supplied with a practitioner's
-            jurisdiction, license number, last name and first name in an HTTP
-            POST request, the service returns matching records with a score
-            indicating the degree to which each result matched the parameters.
+            The ARELLO API (formerly known as the Licensee Verification Web
+            Service) allows clients to obtain real estate licensee information
+            in an automated fashion via a single HTTP request. When supplied
+            with a practitioner's jurisdiction, license number, last name and
+            first name in an HTTP POST request, the service returns matching
+            records with a score indicating the degree to which each result
+            matched the parameters.
           </p>
           <p>
             As of October 27, 2025, this service is provided via SourceRE, and
-            is available upon purchasing any ARELLO data Feed within the
+            is available upon purchasing any ARELLO API data Feed within the
             SourceRE Data Marketplace.
             <strong
               >Users of the previous version of the service, provided by ARELLO,
@@ -699,15 +700,15 @@
           <h2 id="search-api-details">Search API Details</h2>
           <h3 id="interface">Interface</h3>
           <p>
-            The LVWS Search API expects an HTTP POST request with URL-encoded
+            The ARELLO Search API expects an HTTP POST request with URL-encoded
             form parameters. The service returns results in JSON format. TLS
             encryption is required.
           </p>
           <p>
             The web service endpoint URL is:
-            <code>https://api.sourceredb.com/odata/Search</code>. The same URL
-            is used for live and testing environments; use the "searchMode"
-            parameter to switch.
+            <code>https://api.sourceredb.com/Search</code>. The same URL is used
+            for live and testing environments; use the "searchMode" parameter to
+            switch.
           </p>
 
           <h3 id="formatting-request">Formatting the Request</h3>
