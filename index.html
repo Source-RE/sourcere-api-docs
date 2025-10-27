@@ -212,10 +212,6 @@
         margin-top: 0.5rem;
         margin-bottom: 1.5rem;
       }
-      p {
-        /* margin-top: 1rem;
-        margin-bottom: 1rem; */
-      }
     </style>
   </head>
   <body>
@@ -1476,13 +1472,57 @@
       const tabs = document.querySelectorAll(".tab");
       const contents = document.querySelectorAll(".tab-content");
 
+      // Function to switch tabs and update URL
+      function switchTab(tabId) {
+        tabs.forEach((t) => t.classList.remove("active"));
+        contents.forEach((c) => c.classList.remove("active"));
+
+        const activeTab = document.querySelector(`[data-tab="${tabId}"]`);
+        const activeContent = document.getElementById(tabId);
+        
+        if (activeTab && activeContent) {
+          activeTab.classList.add("active");
+          activeContent.classList.add("active");
+          
+          // Update URL based on tab
+          const path = tabId === 'webapi' ? '/sourcere/' : '/arello-api/';
+          const newUrl = window.location.origin + path;
+          window.history.pushState({ tab: tabId }, '', newUrl);
+          
+          // Update section navigation
+          setTimeout(updateSectionNav, 10);
+        }
+      }
+
+      // Function to get tab from URL path
+      function getTabFromPath() {
+        const path = window.location.pathname;
+        if (path.includes('/arello-api/')) {
+          return 'arello';
+        } else if (path.includes('/sourcere/')) {
+          return 'webapi';
+        }
+        return 'webapi'; // default to SourceRE
+      }
+
+      // Initialize tab based on URL
+      function initializeTab() {
+        const tabId = getTabFromPath();
+        switchTab(tabId);
+      }
+
+      // Handle browser back/forward buttons
+      window.addEventListener('popstate', (event) => {
+        if (event.state && event.state.tab) {
+          switchTab(event.state.tab);
+        } else {
+          initializeTab();
+        }
+      });
+
       tabs.forEach((tab) => {
         tab.addEventListener("click", () => {
-          tabs.forEach((t) => t.classList.remove("active"));
-          contents.forEach((c) => c.classList.remove("active"));
-
-          tab.classList.add("active");
-          document.getElementById(tab.dataset.tab).classList.add("active");
+          switchTab(tab.dataset.tab);
         });
       });
       function updateSectionNav() {
@@ -1532,15 +1572,9 @@
       }
 
       document.addEventListener("DOMContentLoaded", () => {
-        updateSectionNav();
+        initializeTab();
       });
 
-      // Update section navigation when tabs change
-      tabs.forEach((tab) => {
-        tab.addEventListener("click", () => {
-          setTimeout(updateSectionNav, 10); // Small delay to ensure tab content is displayed
-        });
-      });
     </script>
   </body>
 </html>
