@@ -229,13 +229,13 @@
       id="section-nav"
       style="
         position: fixed;
-        top: 50px;
+        top: 60px;
         left: 0;
-        width: 200px;
-        padding: 1rem;
-        background: #f9f9f9;
-        border-right: 1px solid #ddd;
-        height: calc(100% - 60px);
+        width: 240px;
+        padding: 0;
+        background: #ffffff;
+        border-right: 1px solid #eee;
+        height: calc(100vh - 60px);
         overflow-y: auto;
       "
     >
@@ -598,7 +598,7 @@
           <h1>ARELLO API via SourceRE</h1>
           <p><em>Last Revision: 10/26/2025</em></p>
 
-          <h2>Table of Contents</h2>
+          <h2 id="table-of-contents">Table of Contents</h2>
           <ul>
             <li><a href="#introduction">Introduction</a></li>
             <li><a href="#quick-start">Quick Start Instructions</a></li>
@@ -1474,6 +1474,9 @@
 
       // Function to switch tabs and update URL
       function switchTab(tabId) {
+        const currentActiveTab = document.querySelector(".tab.active");
+        const isTabSwitch = !currentActiveTab || currentActiveTab.dataset.tab !== tabId;
+        
         tabs.forEach((t) => t.classList.remove("active"));
         contents.forEach((c) => c.classList.remove("active"));
 
@@ -1483,6 +1486,11 @@
         if (activeTab && activeContent) {
           activeTab.classList.add("active");
           activeContent.classList.add("active");
+          
+          // Only scroll to top when actually switching between different tabs
+          if (isTabSwitch) {
+            window.scrollTo({ top: 0, behavior: 'instant' });
+          }
           
           // Update URL based on tab
           const path = tabId === 'webapi' ? '/sourcere/' : '/arello-api/';
@@ -1498,7 +1506,7 @@
           }
           
           // Update section navigation
-          setTimeout(updateSectionNav, 10);
+          updateSectionNav();
         }
       }
 
@@ -1571,10 +1579,32 @@
 
         const navLinks = document.querySelectorAll("#section-list a");
 
+        // Add click handlers for menu navigation
+        navLinks.forEach((link) => {
+          link.addEventListener("click", (e) => {
+            e.preventDefault();
+            const targetId = link.getAttribute("href").substring(1);
+            const targetElement = document.getElementById(targetId);
+            
+            if (targetElement) {
+              const offset = targetElement.offsetTop - 60; // adjust for header height
+              window.scrollTo({
+                top: offset,
+                behavior: 'smooth'
+              });
+            }
+          });
+        });
+
         function highlightNav() {
           let scrollPos =
             document.documentElement.scrollTop || document.body.scrollTop;
           let currentId = "";
+
+          // Check if we're near the bottom of the page
+          const windowHeight = window.innerHeight;
+          const documentHeight = document.documentElement.scrollHeight;
+          const isNearBottom = scrollPos + windowHeight >= documentHeight - 100;
 
           headings.forEach((h2) => {
             const offset = h2.offsetTop - 60; // adjust for header height
@@ -1582,6 +1612,12 @@
               currentId = h2.id;
             }
           });
+
+          // If we're near the bottom and there are headings, highlight the last one
+          if (isNearBottom && headings.length > 0) {
+            const lastHeading = headings[headings.length - 1];
+            currentId = lastHeading.id;
+          }
 
           navLinks.forEach((link) => {
             link.classList.toggle(
