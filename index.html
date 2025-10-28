@@ -212,10 +212,6 @@
         margin-top: 0.5rem;
         margin-bottom: 1.5rem;
       }
-      p {
-        /* margin-top: 1rem;
-        margin-bottom: 1rem; */
-      }
     </style>
   </head>
   <body>
@@ -233,13 +229,13 @@
       id="section-nav"
       style="
         position: fixed;
-        top: 50px;
+        top: 60px;
         left: 0;
-        width: 200px;
-        padding: 1rem;
-        background: #f9f9f9;
-        border-right: 1px solid #ddd;
-        height: calc(100% - 60px);
+        width: 240px;
+        padding: 0;
+        background: #ffffff;
+        border-right: 1px solid #eee;
+        height: calc(100vh - 60px);
         overflow-y: auto;
       "
     >
@@ -602,7 +598,7 @@
           <h1>ARELLO API via SourceRE</h1>
           <p><em>Last Revision: 10/26/2025</em></p>
 
-          <h2>Table of Contents</h2>
+          <h2 id="table-of-contents">Table of Contents</h2>
           <ul>
             <li><a href="#introduction">Introduction</a></li>
             <li><a href="#quick-start">Quick Start Instructions</a></li>
@@ -1476,13 +1472,89 @@
       const tabs = document.querySelectorAll(".tab");
       const contents = document.querySelectorAll(".tab-content");
 
+      // Function to switch tabs and update URL
+      function switchTab(tabId) {
+        const currentActiveTab = document.querySelector(".tab.active");
+        const isTabSwitch = !currentActiveTab || currentActiveTab.dataset.tab !== tabId;
+        
+        tabs.forEach((t) => t.classList.remove("active"));
+        contents.forEach((c) => c.classList.remove("active"));
+
+        const activeTab = document.querySelector(`[data-tab="${tabId}"]`);
+        const activeContent = document.getElementById(tabId);
+        
+        if (activeTab && activeContent) {
+          activeTab.classList.add("active");
+          activeContent.classList.add("active");
+          
+          // Only scroll to top when actually switching between different tabs
+          if (isTabSwitch) {
+            window.scrollTo({ top: 0, behavior: 'instant' });
+          }
+          
+          // Update URL based on tab
+          const path = tabId === 'webapi' ? '/sourcere/' : '/arello-api/';
+          const hash = tabId === 'webapi' ? '#sourcere' : '#arello-api';
+          
+          try {
+            // Try path-based routing first (for http:// protocol)
+            const newUrl = window.location.origin + path;
+            window.history.pushState({ tab: tabId }, '', newUrl);
+          } catch (e) {
+            // Fallback to hash-based routing (for file:// protocol or if pushState fails)
+            window.location.hash = hash;
+          }
+          
+          // Update section navigation
+          updateSectionNav();
+        }
+      }
+
+      // Function to get tab from URL path
+      function getTabFromPath() {
+        const path = window.location.pathname;
+        const hash = window.location.hash;
+        
+        // Check for hash-based routing (works for both file:// and http:// protocols)
+        if (hash === '#arello-api' || hash === '#arello') {
+          return 'arello';
+        } else if (hash === '#sourcere' || hash === '#webapi') {
+          return 'webapi';
+        }
+        
+        // Check for path-based routing (for http:// protocol)
+        if (path.includes('/arello-api/')) {
+          return 'arello';
+        } else if (path.includes('/sourcere/')) {
+          return 'webapi';
+        }
+        
+        return 'webapi'; // default to SourceRE
+      }
+
+      // Initialize tab based on URL
+      function initializeTab() {
+        const tabId = getTabFromPath();
+        switchTab(tabId);
+      }
+
+      // Handle browser back/forward buttons
+      window.addEventListener('popstate', (event) => {
+        if (event.state && event.state.tab) {
+          switchTab(event.state.tab);
+        } else {
+          initializeTab();
+        }
+      });
+
+      // Handle hash changes for file:// protocol
+      window.addEventListener('hashchange', () => {
+        initializeTab();
+      });
+
       tabs.forEach((tab) => {
         tab.addEventListener("click", () => {
-          tabs.forEach((t) => t.classList.remove("active"));
-          contents.forEach((c) => c.classList.remove("active"));
-
-          tab.classList.add("active");
-          document.getElementById(tab.dataset.tab).classList.add("active");
+          switchTab(tab.dataset.tab);
         });
       });
       function updateSectionNav() {
@@ -1507,10 +1579,32 @@
 
         const navLinks = document.querySelectorAll("#section-list a");
 
+        // Add click handlers for menu navigation
+        navLinks.forEach((link) => {
+          link.addEventListener("click", (e) => {
+            e.preventDefault();
+            const targetId = link.getAttribute("href").substring(1);
+            const targetElement = document.getElementById(targetId);
+            
+            if (targetElement) {
+              const offset = targetElement.offsetTop - 60; // adjust for header height
+              window.scrollTo({
+                top: offset,
+                behavior: 'smooth'
+              });
+            }
+          });
+        });
+
         function highlightNav() {
           let scrollPos =
             document.documentElement.scrollTop || document.body.scrollTop;
           let currentId = "";
+
+          // Check if we're near the bottom of the page
+          const windowHeight = window.innerHeight;
+          const documentHeight = document.documentElement.scrollHeight;
+          const isNearBottom = scrollPos + windowHeight >= documentHeight - 100;
 
           headings.forEach((h2) => {
             const offset = h2.offsetTop - 60; // adjust for header height
@@ -1518,6 +1612,12 @@
               currentId = h2.id;
             }
           });
+
+          // If we're near the bottom and there are headings, highlight the last one
+          if (isNearBottom && headings.length > 0) {
+            const lastHeading = headings[headings.length - 1];
+            currentId = lastHeading.id;
+          }
 
           navLinks.forEach((link) => {
             link.classList.toggle(
@@ -1532,15 +1632,9 @@
       }
 
       document.addEventListener("DOMContentLoaded", () => {
-        updateSectionNav();
+        initializeTab();
       });
 
-      // Update section navigation when tabs change
-      tabs.forEach((tab) => {
-        tab.addEventListener("click", () => {
-          setTimeout(updateSectionNav, 10); // Small delay to ensure tab content is displayed
-        });
-      });
     </script>
   </body>
 </html>
