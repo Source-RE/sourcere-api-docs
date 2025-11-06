@@ -45,6 +45,22 @@ h4 {
   border-top: 1px solid #eee;
 }
 
+/* Ensure all headings within section content also get borders */
+.section__content h3,
+.section__content h4 {
+  font-weight: 500;
+  margin-top: 1rem;
+  padding-top: 1rem;
+  border-top: 1px solid #eee;
+}
+
+.section__content h3:first-child,
+.section__content h4:first-child {
+  border-top: none;
+  padding-top: 0;
+  margin-top: 0;
+}
+
 main ul,
 main ol {
   padding-left: 1.5rem;
