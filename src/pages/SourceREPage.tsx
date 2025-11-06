@@ -1,34 +1,36 @@
-import React, { useEffect, useRef } from 'react'
-import { useParams } from 'react-router-dom'
+import React, { useEffect } from 'react'
+import { useLocation, useParams, useNavigate } from 'react-router-dom'
 import { DocumentationLayout } from '../components/layout/DocumentationLayout'
 import { Section } from '../components/ui/Section'
 import { sourcereContent } from '../content/sourcere'
 
 export function SourceREPage() {
+  const location = useLocation()
   const { sectionId } = useParams<{ sectionId: string }>()
-  const previousSectionId = useRef<string | undefined>()
+  const navigate = useNavigate()
 
   useEffect(() => {
+    // If accessing via old path-based URL, redirect to hash-based
     if (sectionId) {
-      // Only scroll if navigating from one section to another (not on initial load)
-      const isNavigation = previousSectionId.current !== undefined && previousSectionId.current !== sectionId
-      
-      if (isNavigation) {
+      navigate(`/sourcere#${sectionId}`, { replace: true })
+      return
+    }
+
+    // Handle hash-based navigation for deep linking
+    if (location.hash) {
+      const hashSectionId = location.hash.substring(1) // Remove the '#'
+      const element = document.getElementById(hashSectionId)
+      if (element) {
         setTimeout(() => {
-          const element = document.getElementById(sectionId)
-          if (element) {
-            const offset = element.offsetTop - 60 // Account for header
-            window.scrollTo({
-              top: offset,
-              behavior: 'smooth',
-            })
-          }
+          const offset = element.offsetTop - 60 // Account for header
+          window.scrollTo({
+            top: offset,
+            behavior: 'smooth',
+          })
         }, 100)
       }
-      
-      previousSectionId.current = sectionId
     }
-  }, [sectionId])
+  }, [sectionId, location.hash, navigate])
 
   return (
     <DocumentationLayout title={sourcereContent.title} sections={sourcereContent.sections}>

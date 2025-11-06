@@ -13,9 +13,9 @@ function App() {
         <Header />
         <Routes>
           <Route path="/" element={<Navigate to="/sourcere" replace />} />
-          <Route path="/sourcere" element={<Navigate to="/sourcere/overview" replace />} />
+          <Route path="/sourcere" element={<SourceREPage />} />
           <Route path="/sourcere/:sectionId" element={<SourceREPage />} />
-          <Route path="/arello-api" element={<Navigate to="/arello-api/table-of-contents" replace />} />
+          <Route path="/arello-api" element={<ARELLOPage />} />
           <Route path="/arello-api/:sectionId" element={<ARELLOPage />} />
         </Routes>
       </div>
