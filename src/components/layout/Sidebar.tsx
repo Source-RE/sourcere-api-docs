@@ -1,20 +1,19 @@
 import React from 'react'
-import { Link, useParams } from 'react-router-dom'
 import { useSidebar } from '../../hooks/useSidebar'
 import type { SectionMetadata } from '../../types'
 import '../../styles/components/sidebar.css'
 
 interface SidebarProps {
   sections: SectionMetadata[]
-  basePath: string
 }
 
-export function Sidebar({ sections, basePath }: SidebarProps) {
-  const { sectionId: urlSectionId } = useParams<{ sectionId: string }>()
-  const { activeSectionId } = useSidebar(sections)
+export function Sidebar({ sections }: SidebarProps) {
+  const { activeSectionId, scrollToSection } = useSidebar(sections)
 
-  // Use URL section ID if available, otherwise use scroll-based active section
-  const currentActiveId = urlSectionId || activeSectionId
+  const handleLinkClick = (e: React.MouseEvent<HTMLAnchorElement>, sectionId: string) => {
+    e.preventDefault()
+    scrollToSection(sectionId)
+  }
 
   return (
     <aside className="sidebar">
@@ -22,14 +21,15 @@ export function Sidebar({ sections, basePath }: SidebarProps) {
         <ul className="sidebar__list">
           {sections.map((section) => (
             <li key={section.id} className="sidebar__item">
-              <Link
-                to={`${basePath}/${section.id}`}
+              <a
+                href={`#${section.id}`}
+                onClick={(e) => handleLinkClick(e, section.id)}
                 className={`sidebar__link ${
-                  currentActiveId === section.id ? 'sidebar__link--active' : ''
+                  activeSectionId === section.id ? 'sidebar__link--active' : ''
                 }`}
               >
                 {section.title}
-              </Link>
+              </a>
             </li>
           ))}
         </ul>

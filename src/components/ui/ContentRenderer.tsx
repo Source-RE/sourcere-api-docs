@@ -66,6 +66,28 @@ export function ContentRenderer({ sections }: ContentRendererProps) {
                     if (part.type === 'code') {
                       return <code key={partIndex}>{part.text}</code>
                     }
+                    if (part.type === 'link') {
+                      const link = part as LinkContent
+                      return (
+                        <a
+                          key={partIndex}
+                          href={link.href}
+                          onClick={(e) => {
+                            e.preventDefault()
+                            const element = document.getElementById(link.href.replace('#', ''))
+                            if (element) {
+                              const offset = element.offsetTop - 60
+                              window.scrollTo({
+                                top: offset,
+                                behavior: 'smooth',
+                              })
+                            }
+                          }}
+                        >
+                          {link.text}
+                        </a>
+                      )
+                    }
                     return null
                   })}
                 </li>
@@ -76,8 +98,9 @@ export function ContentRenderer({ sections }: ContentRendererProps) {
 
       case 'subsection':
         const HeadingTag = `h${section.level || 3}` as keyof JSX.IntrinsicElements
+        const subsectionId = section.id || section.title.toLowerCase().replace(/\s+/g, '-').replace(/[^a-z0-9-]/g, '')
         return (
-          <div key={key}>
+          <div key={key} id={subsectionId}>
             <HeadingTag>{section.title}</HeadingTag>
             {section.content.map((subSection, subIndex) =>
               renderSection(subSection, `${key}-${subIndex}`)

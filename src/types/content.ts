@@ -23,13 +23,14 @@ export interface CodeContent {
 export interface ListContent {
   type: 'list'
   ordered?: boolean
-  items: (string | (string | InlineCodeContent)[])[]
+  items: (string | (string | InlineCodeContent | LinkContent)[])[]
 }
 
 export interface SubSectionContent {
   type: 'subsection'
   title: string
   level?: number
+  id?: string
   content: ContentSection[]
 }
 

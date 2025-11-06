@@ -21,5 +21,11 @@ export const rateLimits: ContentSection[] = [
       ' responses.',
     ],
   },
+  {
+    type: 'paragraph',
+    content: [
+      'The Rate Limits do not apply to the JWT Bearer Token, but to your Feed. Every time you press "Copy Bearer Token" on the Feed within the Data Marketplace, a new token is generated. This does not invalidate previous tokens. Every token is valid for 1 year.',
+    ],
+  },
 ]
 

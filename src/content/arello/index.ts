@@ -5,6 +5,7 @@ import { searchApiDetails } from './searchApiDetails'
 import { rateLimits } from './rateLimits'
 import { jurisdictionInfo } from './jurisdictionInfo'
 import { contactUs } from './contactUs'
+import { tableOfContents } from './tableOfContents'
 
 export const arelloContent: DocumentationContent = {
   title: 'ARELLO API via SourceRE',
@@ -18,7 +19,7 @@ export const arelloContent: DocumentationContent = {
     { id: 'contact-us', title: 'Contact Us' },
   ],
   content: {
-    'table-of-contents': [],
+    'table-of-contents': tableOfContents,
     introduction,
     'quick-start': quickStart,
     'search-api-details': searchApiDetails,
