@@ -1,0 +1,64 @@
+.section {
+  margin-bottom: 2rem;
+}
+
+.section__heading {
+  font-weight: 500;
+  margin-top: 1rem;
+  padding-top: 1rem;
+  border-top: 1px solid #eee;
+}
+
+.section__heading:first-of-type {
+  border-top: none;
+  padding-top: 0;
+  margin-top: 0;
+}
+
+h1:first-child,
+h2:first-child,
+h3:first-child {
+  border-top: none;
+  padding-top: 0;
+}
+
+.section__heading--level-3 {
+  font-size: 1.1rem;
+  margin-top: 1.5rem;
+  padding-top: 0.75rem;
+  border-top: 1px solid #eee;
+}
+
+.section__heading--level-4 {
+  font-size: 16px;
+  font-weight: 600;
+  margin-top: 1rem;
+  padding-top: 1rem;
+  border-top: 1px solid #eee;
+}
+
+.section__content {
+  margin-top: 0.5rem;
+}
+
+.section__content p {
+  margin-top: 0.5rem;
+  margin-bottom: 1rem;
+}
+
+.section__content ul,
+.section__content ol {
+  padding-left: 1.5rem;
+  margin-top: 0.5rem;
+  margin-bottom: 1.5rem;
+}
+
+.section__content li {
+  margin-bottom: 0.5rem;
+}
+
+/* Reduce spacing for Table of Contents */
+#table-of-contents .section__content li {
+  margin-bottom: 0.1rem;
+}
+
