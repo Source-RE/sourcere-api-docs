@@ -4,9 +4,1543 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>SourceRE API Documentation</title>
+    <style>
+      #section-nav {
+        position: fixed;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: flex-start;
+        top: 0;
+        left: 0;
+        width: 240px;
+        height: 100vh;
+        background: #ffffff;
+        padding: 0;
+        margin: 0;
+        border-right: 1px solid #eee;
+        box-shadow: none;
+        z-index: 100;
+        overflow-y: auto;
+      }
+
+      #section-nav nav {
+        background: #ffffff;
+        width: 240px;
+        height: 100%;
+        list-style: none;
+        padding: 0 !important;
+        margin: 0 !important;
+      }
+
+      #section-nav nav ul {
+        width: 240px;
+        list-style: none;
+        padding: 0 !important;
+        margin: 0 !important;
+      }
+
+      html {
+        scroll-padding-top: 60px;
+        scroll-behavior: smooth;
+      }
+
+      #section-nav nav ul li {
+        width: 240px;
+        margin: 0 !important;
+        padding: 0 !important;
+      }
+
+      #section-nav nav ul li a {
+        display: block;
+        padding: 16px 20px;
+        color: #000000;
+        font-size: 15px;
+        font-weight: 500;
+        text-decoration: none;
+        background: #ffffff;
+        border-top: 1px solid #f0f0f0;
+      }
+
+      #section-nav nav ul li:first-child a {
+        border-top: none;
+      }
+
+      #section-nav nav ul li a:hover {
+        background-color: #f7f7f7;
+      }
+
+      #section-nav nav ul li a.active {
+        background-color: #f0f0f0;
+        font-weight: 600;
+      }
+
+      body {
+        margin-left: 240px;
+      }
+
+      code {
+        background: #f5f4f4;
+        color: #000000;
+        font-weight: 500;
+        padding: 2px 3px;
+        border-radius: 4px;
+        font-size: 16px;
+        font-family: Arial, Helvetica, sans-serif;
+      }
+      .code-block {
+        background: #000030;
+        color: #ffffff;
+        padding: 10px 20px;
+        border-radius: 4px;
+        font-family: monospace;
+        font-size: 14px;
+        line-height: 1.5;
+        margin-bottom: 1rem;
+        margin-top: 0rem;
+        display: block;
+      }
+      a {
+        color: #6307a6;
+        text-decoration: none;
+      }
+      body {
+        margin: 0;
+        font-family: sans-serif;
+        background: #ffffff;
+        line-height: 1.7;
+        color: #333;
+      }
+      header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        background: #fff;
+        color: #1a202c;
+        padding: 0.5rem 2rem;
+        position: sticky;
+        top: 0;
+        box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+        z-index: 1000;
+      }
+      header img {
+        height: 32px;
+        margin-right: 0.5rem;
+      }
+      header .title {
+        display: flex;
+        align-items: center;
+        font-weight: 600;
+        font-size: 1.2rem;
+      }
+      header .tabs {
+        display: flex;
+        gap: 2rem;
+        margin-top: 0.25rem;
+      }
+      header .tab {
+        padding: 0.5rem 1rem;
+        cursor: pointer;
+        border-bottom: 2px solid transparent;
+        transition: border-color 0.3s;
+      }
+      header .tab.active {
+        border-bottom-color: #6307a6;
+        font-weight: 600;
+      }
+      header .tab:hover {
+        border-bottom-color: #6307a6;
+      }
+      main {
+        padding: 2rem;
+        max-width: 1000px;
+        margin: auto;
+        background: #ffffff;
+      }
+      .tab-content {
+        display: none;
+      }
+      .tab-content.active {
+        display: block;
+      }
+      h1,
+      h2,
+      h3 {
+        font-weight: 500;
+        margin-top: 1rem;
+        padding-top: 1rem;
+        border-top: 1px solid #eee;
+      }
+      h1:first-child,
+      h2:first-child,
+      h3:first-child {
+        border-top: none;
+        padding-top: 0;
+      }
+      h4 {
+        font-size: 16px;
+        font-weight: 600;
+        margin-top: 1rem;
+        padding-top: 1rem;
+        border-top: 1px solid #eee;
+      }
+      pre {
+        background: #f5f5f5;
+        padding: 1rem;
+        overflow: auto;
+        border-radius: 6px;
+      }
+      table {
+        border-collapse: collapse;
+        width: 100%;
+        margin-top: 1rem;
+        margin-bottom: 1rem;
+      }
+      table,
+      th,
+      td {
+        border: 1px solid #ddd;
+      }
+      th,
+      td {
+        padding: 8px 12px;
+        text-align: left;
+      }
+      main ul,
+      main ol {
+        padding-left: 1.5rem;
+        margin-top: 0.5rem;
+        margin-bottom: 1.5rem;
+      }
+      p {
+        /* margin-top: 1rem;
+        margin-bottom: 1rem; */
+      }
+    </style>
   </head>
   <body>
-    <div id="root"></div>
-    <script type="module" src="/src/main.tsx"></script>
+    <header>
+      <div class="title">
+        <img src="logo.png" alt="SourceRE Logo" />
+        API DOCUMENTATION
+      </div>
+      <nav class="tabs">
+        <span class="tab active" data-tab="webapi">SourceRE</span>
+        <span class="tab" data-tab="arello">ARELLO API</span>
+      </nav>
+    </header>
+    <aside
+      id="section-nav"
+      style="
+        position: fixed;
+        top: 50px;
+        left: 0;
+        width: 200px;
+        padding: 1rem;
+        background: #f9f9f9;
+        border-right: 1px solid #ddd;
+        height: calc(100% - 60px);
+        overflow-y: auto;
+      "
+    >
+      <nav>
+        <ul id="section-list" style="list-style: none; padding: 0; margin: 0">
+          <!-- dynamically populated -->
+        </ul>
+      </nav>
+    </aside>
+    <div style="margin-left: 240px">
+      <main>
+        <div id="webapi" class="tab-content active">
+          <h1>SourceRE RESO Web API</h1>
+
+          <h2>Overview</h2>
+          <p>
+            SourceRE is a platform designed for real estate software vendors to
+            access standardized data feeds. It enables vendors to purchase
+            access to MLS data based on Plans defined by the MLS, which are
+            provisioned for the vendor's specific Products. When a vendor
+            purchases a Plan for one of their Products, they receive an API
+            feed. Feeds are accessed via feed-specific JWT bearer tokens. Each
+            token is active for 1 year, and a new token can be retrieved at any
+            time by pressing "Copy Bearer Token" on the feed within the Data
+            Marketplace.
+          </p>
+          <p>
+            Data access, structure, and enumerations are tailored per Plan.
+            Every Feed reflects its Plan's specific metadata, field-level
+            permissions, and record-level access rules, ensuring the MLS retains
+            granular control over how its data is consumed.
+          </p>
+          <p>
+            MLS Data is available via the SourceRE RESO Web API, and it is
+            standardized according to the RESO Data Dictionary. For more
+            information about the RESO Web API specification, please visit the
+            <a href="https://www.reso.org/reso-web-api/" target="_blank"
+              >RESO Website</a
+            >. A guide to authenicating, querying, and replicating data from the
+            SourceRE RESO Web API is provided below.
+          </p>
+
+          <h2>Authentication</h2>
+          <p>
+            The JWT bearer token must be included in the
+            <code>Authorization</code> header for all API requests.
+          </p>
+          <div class="code-block">Authorization: Bearer &lt;your_token&gt;</div>
+          <p>
+            These tokens are long-lived and should be stored securely. Tokens
+            are scoped to a specific Feed and can only access data from that
+            feed.
+          </p>
+
+          <h2>Metadata & Lookups</h2>
+          <p>
+            SourceRE provides metadata discovery in accordance with the RESO Web
+            API standard:
+          </p>
+          <h4>Service Endpoint</h4>
+          <div class="code-block">GET https://api.sourceredb.com/odata/</div>
+          <p>
+            Describes the available entity types (resources) for the given feed.
+          </p>
+          <h4>Metadata Endpoint</h4>
+          <div class="code-block">
+            GET https://api.sourceredb.com/odata/$metadata
+          </div>
+          <p>
+            Describes the available fields for each entity type, including
+            navigation properties.
+          </p>
+          <p>
+            Enumeration fields in the metadata are typed as
+            <code>Edm.String</code> or <code>Collection(Edm.String)</code> and
+            include a <code>RESO.OData.Metadata.LookupName</code> annotation
+            identifying the Lookup name. For example, the
+            <code>PropertyType</code> field has the following annotation:
+          </p>
+          <div class="code-block">
+            &lt;Annotation Term="RESO.OData.Metadata.LookupName"
+            String="PropertyType" /&gt;
+          </div>
+          <h4>Lookup Endpoint</h4>
+          <div class="code-block">
+            GET https://api.sourceredb.com/odata/Lookup?$filter=LookupName eq
+            'PropertyType'
+          </div>
+          <p>
+            Returns enumeration values for fields annotated with
+            <code>RESO.OData.Metadata.LookupName</code>, according to the RESO
+            Web API specification.
+          </p>
+
+          <h2>Data Access and Structure</h2>
+          <h3>Endpoints</h3>
+          <p>
+            All entity types are exposed as OData resources at their
+            corresponding endpoint:
+          </p>
+          <div class="code-block">
+            https://api.sourceredb.com/odata/{EntityType}
+          </div>
+          <p>
+            These endpoints support OData query options as defined in the RESO
+            Web API specification. Here is a brief overview of the available
+            query options:
+          </p>
+          <ul>
+            <li>
+              <code>$expand</code> - Expand related entities from another
+              resource
+            </li>
+            <li><code>$filter</code> - Filter records based on field values</li>
+            <li>
+              <code>$orderby</code> - Sort results by field values, ascending or
+              descending
+            </li>
+            <li>
+              <code>$top</code> - Limit results to a specific number of records
+            </li>
+            <li>
+              <code>$skip</code> - Skip a specific number of records in the
+              resulting set
+            </li>
+            <li><code>$count</code> - Include count of resulting records</li>
+            <li>
+              <code>$select</code> - Select specific fields to include in the
+              response
+            </li>
+          </ul>
+          <p>
+            For example, here is a query to the Property resource which makes
+            use of each query option:
+          </p>
+          <div class="code-block">
+            GET
+            https://api.sourceredb.com/odata/Property?$expand=ListAgent&$filter=PropertyType
+            eq 'Residential'&$orderby=APIModificationTimestamp
+            desc&$top=100&$skip=100&$count=true&$select=APIModificationTimestamp,PropertyType
+          </div>
+          <p>
+            This query will return 100 residential properties, sorting by the
+            APIModificationTimestamp field in descending order and skipping the
+            first 100 properties. The response will include an
+            <code>@odata.count</code> of resulting records, and each record will
+            include the <code>APIModificationTimestamp</code> and
+            <code>PropertyType</code> fields, as well as the
+            <code>ListAgent</code> navigation property.
+          </p>
+
+          <h3>Sub-Resources</h3>
+          <p>
+            Certain entity types are scoped to a single parent resource, and are
+            exposed as top-level resources with a prefix of the parent, in
+            addition to being available as navigation properties. For example,
+            individual rooms associated with a property are exposed as the
+            <code>PropertyRooms</code> resource, in addition to being available
+            as the <code>Rooms</code> navigation on the
+            <code>Property</code> resource:
+          </p>
+          <div class="code-block">
+            GET https://api.sourceredb.com/odata/Property?$expand=Rooms
+          </div>
+
+          <!-- <h2>Plans-Based Permissions</h2>
+          <p>
+            Each record includes a <code>PermittedUse</code> array field listing
+            which usages are permitted for that record. This lets clients
+            determine the context in which a record can be displayed or
+            processed. For example, a record with a
+            <code>PermittedUse</code> array of <code>["Public"]</code>.
+          </p>
+          <p>Other usage-related fields may include:</p>
+          <ul>
+            <li>Fields prefixed with <code>IDX</code> or <code>VOW</code></li>
+            <li>
+              <code>SyndicateTo</code> – Enumerated field indicating syndication
+              channels
+            </li>
+          </ul> -->
+
+          <h2>Field & Record-Level Restrictions</h2>
+          <p>
+            Permissions are defined per Plan by the MLS and enforced
+            automatically. This may include:
+          </p>
+          <ul>
+            <li>Which fields are included</li>
+            <li>Which records are visible</li>
+          </ul>
+          <p>
+            The MLS may also define display and usage restrictions for specific
+            fields and entities. Clients must consult the MLS for display and
+            usage guidelines.
+          </p>
+
+          <h2>Pagination & Filtering</h2>
+          <h3>Pagination</h3>
+          <p>
+            All endpoints support pagination via
+            <code>@odata.nextLink</code>. This is a URL returned in the response
+            that can be used to retrieve the next page of results. If any query
+            options are passed, such as <code>$top</code> or
+            <code>$filter</code>, they will be accounted for in the nextLink
+            URL.
+          </p>
+          <p>
+            If no $top value is passed, the default page size will be 10
+            records. The maximum value for $top is 1000, unless only the primary
+            key of the resource is selected, in which case the maximum value is
+            100,000. For example:
+          </p>
+          <div class="code-block">
+            https://api.sourceredb.com/odata/Property?$select=ListingKey&$top=100000
+          </div>
+
+          <h3>Filtering</h3>
+          <p>
+            OData filters are supported on all fields. The operators available
+            may differ based on the field type. Here are some examples:
+          </p>
+          <div class="code-block">
+            https://api.sourceredb.com/odata/Property?$filter=Appliances eq
+            'Refrigerator'
+          </div>
+          <p>With bounds:</p>
+          <div class="code-block">
+            https://api.sourceredb.com/odata/Property?$filter=BathroomsTotalInteger
+            gt 0 and BathroomsTotalInteger lt 3
+          </div>
+
+          <h2>Updated Records</h2>
+          <p>
+            The ModificationTimestamp indicates the time in UTC at which the
+            record was last updated in the MLS source system. The
+            APIModificationTimestamp indicates the time in UTC at which the
+            record was last updated in SourceRE.
+          </p>
+          <div class="code-block">
+            { "ModificationTimestamp": "2025-04-01T12:34:56Z",
+            "APIModificationTimestamp": "2025-04-01T12:39:49Z" }
+          </div>
+
+          <h2>Deleted Records</h2>
+          <p>Deleted records appear for 48 hours after deletion with:</p>
+          <div class="code-block">
+            { "DeletedInSource": true, "DeletionTimestamp":
+            "2025-04-01T12:34:56Z" }
+          </div>
+          <p>
+            Updates to the DeletionTimestamp will also coincide with updates to
+            the APIModificationTimestamp field. If a client stops pulling
+            records for 48 hours or longer, they must reconcile deletions for a
+            resource using the following process:
+          </p>
+          <ul>
+            <li>Pull all primary keys for the resource</li>
+            <li>Compare against the primary keys in their local system</li>
+            <li>
+              Purge records from their local system whose keys are no longer
+              found in SourceRE
+            </li>
+          </ul>
+
+          <h2>Replication</h2>
+          <h3>Initial Bulk Load</h3>
+          <p>
+            Clients must replicate feed data locally. SourceRE recommends the
+            following strategy for each parent resource you wish to replicate:
+          </p>
+          <ul>
+            <li>
+              Request data using the resource endpoint, including any $filter
+              and $select options you wish to use, as well as $expand for any
+              sub-resources you wish to replicate (e.g. $expand=Rooms).
+            </li>
+            <li>
+              Follow <code>@odata.nextLink</code> until it no longer appears in
+              the response.
+            </li>
+            <li>If interrupted, restart replication from the beginning.</li>
+            <!-- <li>
+            If interrupted, resume using:
+            <code
+              >$filter=APIModificationTimestamp gt
+              &lt;last_successful_timestamp&gt;</code
+            >
+          </li> -->
+          </ul>
+
+          <h3>Ongoing Updates</h3>
+          <p>
+            After replicating the entire dataset as required, poll for
+            new/updated records using
+            <code>APIModificationTimestamp</code> filters. Start with the newest
+            APIModificationTimestamp value you have in your local system, and
+            continue pulling until you have caught up to the current
+            APIModificationTimestamp value in SourceRE. We recommend a filter
+            window of no larger than 1 hour. For example:
+          </p>
+          <div class="code-block">
+            $filter=APIModificationTimestamp gt 2025-05-07T00:00:00Z and
+            APIModificationTimestamp lt 2025-05-07T01:00:00Z
+          </div>
+          <p>
+            Pull metadata and lookup updates no more than once per day. We
+            recommend refreshing other data at least once per hour. Within
+            SourceRE, data updates will occur in 10-minute intervals.
+          </p>
+
+          <h3>Media</h3>
+          <p>
+            The <code>Media</code> resource contains a MediaURL pointing to
+            hosted images and documents. Media can be replicated as a top level
+            resource and as a navigation property on several resources,
+            including: Property, Office, Member, Team, and OpenHouse.
+          </p>
+          <p>
+            <strong>Important:</strong> For photos and documents, do not hotlink
+            MediaURLs in production. Always replicate these media types to your
+            own servers.
+          </p>
+
+          <h2>Rate Limits</h2>
+          <p>
+            Unless otherwise noted, the following rate limits apply
+            <em>per Feed</em>:
+          </p>
+          <ul>
+            <li>No concurrent requests</li>
+            <li>Max 3 requests per second</li>
+            <li>Max 5,000 requests per hour</li>
+          </ul>
+          <!-- a more standard backoff strategy? -->
+          <p>Violations result in HTTP <code>429</code> responses.</p>
+
+          <h2>Postman Library</h2>
+          <p>
+            A Postman library is available at this link:
+            <a
+              href="https://documenter.getpostman.com/view/21580732/2sB3B8qsiw#8f584668-163c-464f-81e8-86a1555a3962"
+              target="_blank"
+              >SourceRE Postman Library</a
+            >
+          </p>
+          <p>
+            It contains examples of how to retrieve metadata, lookup values, and
+            data from the SourceRE RESO Web API.
+          </p>
+          <div style="height: 100px"></div>
+          <p>
+            For questions pertaining to the API, contact:
+            <strong>support@sourceredb.com</strong>. For any other inquiries,
+            please reach out to the MLS.
+          </p>
+          <div style="height: 650px"></div>
+        </div>
+        <div id="arello" class="tab-content">
+          <h1>ARELLO API via SourceRE</h1>
+          <p><em>Last Revision: 10/26/2025</em></p>
+
+          <h2>Table of Contents</h2>
+          <ul>
+            <li><a href="#introduction">Introduction</a></li>
+            <li><a href="#quick-start">Quick Start Instructions</a></li>
+            <li>
+              <a href="#search-api-details">Search API Details</a>
+            </li>
+            <li><a href="#interface">Interface</a></li>
+            <li><a href="#formatting-request">Formatting the Request</a></li>
+            <li>
+              <a href="#search-performance">How Searches Are Performed</a>
+            </li>
+            <li><a href="#search-signals">Search Signals</a></li>
+            <li><a href="#search-parameters">Search Parameters</a></li>
+            <li><a href="#reading-response">Reading the Response</a></li>
+            <li><a href="#warnings-errors">Warnings and Errors</a></li>
+            <li><a href="#rate-limits">Rate Limits</a></li>
+            <li><a href="#testing-environment">Testing Environment</a></li>
+            <li>
+              <a href="#jurisdiction-info"
+                >Jurisdiction Participation and License Format Information</a
+              >
+            </li>
+            <li><a href="#contact-us">Contact Us</a></li>
+          </ul>
+
+          <h2 id="introduction">Introduction</h2>
+          <p>
+            The ARELLO API (formerly known as the Licensee Verification Web
+            Service) allows clients to obtain real estate licensee information
+            in an automated fashion via a single HTTP request. When supplied
+            with a practitioner's jurisdiction, license number, last name and
+            first name in an HTTP POST request, the service returns matching
+            records with a score indicating the degree to which each result
+            matched the parameters.
+          </p>
+          <p>
+            As of October 27, 2025, this service is provided via SourceRE, and
+            is available upon purchasing any ARELLO API data Feed within the
+            SourceRE Data Marketplace.
+            <strong
+              >Users of the previous version of the service, provided by ARELLO,
+              will need to update their implementation to use the new
+              service.</strong
+            >
+          </p>
+          <p>SourceRE offers two different Plans for ARELLO data Feeds:</p>
+          <ul>
+            <li>
+              <strong>Search</strong> - This Plan provides access to the
+              standard "Search" API, which functions virtually identically to
+              the previous service, with the exception of the endpoint URL and
+              the authentication method. Whereas the previous service required a
+              username and password, the new service requires a JWT bearer
+              token. More information about the authentication method and Search
+              functionality is provided below.
+            </li>
+            <li>
+              <strong>Enhanced (Coming Soon)</strong> - This plan allows for
+              RESTful access to License, Jurisdiction, and Disciplinary Action
+              data, via the SourceRE RESO Web API. Purchasers of this Plan have
+              full access to the Search API as well. Full information about the
+              Enhanced Plan will be provided upon release.
+            </li>
+          </ul>
+          <p>
+            Both of these Plans are priced on a
+            <strong>per-jurisdication</strong> model, meaning that the cost of
+            the Feed is based on the number of jurisdictions you wish to access
+            data for. You may add/remove jurisdictions to your Feed at any time.
+            At least one jurisdiction is required for an Active Feed.
+          </p>
+          <h2 id="quick-start">Quick Start Instructions for the Search API</h2>
+          <ul>
+            <li>Step 1: Read and become familiar with this documentation.</li>
+            <li>
+              Step 2: Purchase an ARELLO data Feed within the SourceRE Data
+              Marketplace.
+            </li>
+            <li>
+              Step 3: Connect to the testing API, and use it to develop your
+              application and ensure it's functioning as intended.
+            </li>
+            <li>
+              Step 4: Once you've developed and tested your application and
+              you're ready to go live, update your implementation to use the
+              live API, and you're off!
+            </li>
+          </ul>
+          <p>
+            Note: The RESO Web API, which is available for purchasers of the
+            "Enhanced" Plan, does <strong>NOT</strong> have a testing
+            environment.
+          </p>
+
+          <h2 id="search-api-details">Search API Details</h2>
+          <h3 id="interface">Interface</h3>
+          <p>
+            The ARELLO Search API expects an HTTP POST request with URL-encoded
+            form parameters. The service returns results in JSON format. TLS
+            encryption is required.
+          </p>
+          <p>
+            The web service endpoint URL is:
+            <code>https://api.sourceredb.com/Search</code>. The same URL is used
+            for live and testing environments; use the "searchMode" parameter to
+            switch.
+          </p>
+
+          <h3 id="formatting-request">Formatting the Request</h3>
+          <p>
+            The web service expects to receive an HTTP POST request with
+            URL-encoded form parameters. This is a standard POST request just
+            like you'd make through a web browser. This type of request is
+            supported by HTTP libraries in all major programming languages.
+          </p>
+          <p>
+            The JWT Bearer Token for your ARELLO data Feed must be included in
+            the Authorization header. This token may be copied from your Feed
+            card within the Data Marketplace. The token replaces the username
+            and password which were used in the previous version of the service
+            and are no longer required.
+          </p>
+
+          <p>Example request:</p>
+          <div class="code-block">
+            POST /Search HTTP/1.1<br />
+            Host: api.sourceredb.com<br />
+            Content-Type: application/x-www-form-urlencoded<br />
+            Authorization: Bearer &lt;your_token&gt;<br />
+            <br />
+            jurisdiction=AL&amp;licenseNumber=12345&amp;lastName=doe&amp;firstName=johnny
+          </div>
+          <p>
+            The following parameters are accepted in the request body as
+            URL-encoded form fields:
+          </p>
+
+          <table>
+            <thead>
+              <tr>
+                <th>Property</th>
+                <th>Type</th>
+                <th>Required</th>
+                <th>Default</th>
+                <th>Description</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>jurisdiction</td>
+                <td>String</td>
+                <td>Yes</td>
+                <td></td>
+                <td>
+                  Two-letter postal abbreviation of the jurisdiction in which to
+                  search.
+                </td>
+              </tr>
+              <tr>
+                <td>licenseNumber</td>
+                <td>String</td>
+                <td>No*</td>
+                <td></td>
+                <td>License number to search for.</td>
+              </tr>
+              <tr>
+                <td>lastName</td>
+                <td>String</td>
+                <td>No*</td>
+                <td></td>
+                <td>Last name to search for.</td>
+              </tr>
+              <tr>
+                <td>firstName</td>
+                <td>String</td>
+                <td>No</td>
+                <td></td>
+                <td>First name to search for.</td>
+              </tr>
+              <tr>
+                <td>minScore</td>
+                <td>Numeric (0-100)</td>
+                <td>No</td>
+                <td>0</td>
+                <td>
+                  Lowest acceptable score for results (inclusive). Results with
+                  a score less than this value will not be returned.
+                </td>
+              </tr>
+              <tr>
+                <td>maxResults</td>
+                <td>Numeric (1-100)</td>
+                <td>No</td>
+                <td>10</td>
+                <td>Maximum number of results to return.</td>
+              </tr>
+              <tr>
+                <td>searchMode</td>
+                <td>String</td>
+                <td>No</td>
+                <td>live</td>
+                <td>
+                  Whether to conduct the search in the live or test environment.
+                  (Valid values are "live" or "test".)
+                </td>
+              </tr>
+            </tbody>
+          </table>
+          <p><em>* one of licenseNumber OR lastName is required</em></p>
+
+          <h3 id="search-performance">How Searches Are Performed</h3>
+          <p>
+            In order to get the best and most reliable results from the Licensee
+            Verification Web Service, it is important to understand how the web
+            service searches the database. Understanding the search routine will
+            help you to know what data to provide, what is most important and
+            what is least important in getting meaningful results.
+          </p>
+
+          <h4 id="search-signals">Search Signals</h4>
+          <p>
+            In order to provide the best matches possible, we calculate and
+            compare a variety of search signals in addition to searching for
+            exact matches. This means that an exact match to licensee data is
+            not required to get meaningful results.
+          </p>
+          <ul>
+            <li>
+              <strong>License number numeric reduction</strong> – we maintain
+              license number formatting information for all participating
+              jurisdictions, and we use that information to calculate a numeric
+              reduction of the license number for comparison. For example, some
+              jurisdictions use character prefixes (REB. 12345) and some use
+              leading zeroes (0012345). The numeric reduction of both examples
+              is 12345. When you search and provide a license number parameter,
+              the value you provide is numerically reduced and compared to this
+              signal.
+            </li>
+            <li>
+              <strong>Soundex pattern matching</strong> – names are often
+              misspelled, or spelling is inferred from phonetics. Soundex is a
+              method of encoding the phonetic form of a name for comparison. For
+              example, while McAlister and McCallister are spelled differently,
+              their Soundex encoding is identical.
+            </li>
+            <li>
+              <strong>Alternate names</strong> – often, people choose to be
+              called by less formal versions of their first name, but on
+              official records the more formal version is used. We maintain a
+              database of alternate names which are used in the search. For
+              example, if you search for Bill Jones, we also search for
+              alternate first names like Will and William.
+            </li>
+          </ul>
+
+          <h4 id="search-parameters">Search Parameters</h4>
+          <p>
+            Searches can only be performed on data that you provide. If you omit
+            any of the search parameters, the likelihood of erroneous results
+            increases. It is to your advantage to provide all the search
+            parameters. For each parameter you provide, one of the signals must
+            match in order for a result to be returned.
+          </p>
+          <ul>
+            <li>
+              For License Number, there must be an exact match or numeric
+              reduction match
+            </li>
+            <li>
+              For Last Name, there must be an exact match or Soundex match
+            </li>
+            <li>
+              For First Name, there must be an exact match, alternate name
+              match, or Soundex match
+            </li>
+          </ul>
+          <p>
+            If you provide multiple parameters, all parameters must return a
+            match for a result to be included. Think "AND" logic as opposed to
+            "OR."
+          </p>
+          <p>
+            After the search results are selected from the database, they are
+            assigned a score based on the quality of the match. The maximum
+            possible score is 100, if all 3 search parameters return an exact
+            match. White space is ignored for exact matches ("Aaron" is an exact
+            match of "Aaron ").
+          </p>
+
+          <table>
+            <thead>
+              <tr>
+                <th>Parameter</th>
+                <th>Match Type</th>
+                <th>Score</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td rowspan="2">License Number</td>
+                <td>Exact</td>
+                <td>40</td>
+              </tr>
+              <tr>
+                <td>Numeric Reduction</td>
+                <td>30</td>
+              </tr>
+              <tr>
+                <td rowspan="2">Last Name</td>
+                <td>Exact</td>
+                <td>40</td>
+              </tr>
+              <tr>
+                <td>Soundex</td>
+                <td>20</td>
+              </tr>
+              <tr>
+                <td rowspan="3">First Name</td>
+                <td>Exact</td>
+                <td>20</td>
+              </tr>
+              <tr>
+                <td>Alternate Name</td>
+                <td>15</td>
+              </tr>
+              <tr>
+                <td>Soundex</td>
+                <td>10</td>
+              </tr>
+            </tbody>
+          </table>
+          <p>
+            Note that it is to your advantage to provide all the search
+            parameters when searching. If a parameter is not included in the
+            request, the score for the parameter is automatically 0. For
+            example, if you don't include a first name, the maximum possible
+            score you can get is 80 (License Number exact + Last Name exact).
+          </p>
+
+          <h3 id="reading-response">Reading the Response</h3>
+          <p>
+            The response from the web service is a JSON structure with 4
+            top-level keys:
+          </p>
+          <ul>
+            <li>
+              <strong>"request" (struct)</strong> - The request information that
+              produced the response.
+            </li>
+            <li>
+              <strong>"results" (array of struct)</strong> - The results of the
+              search.
+            </li>
+            <li>
+              <strong>"warnings" (array of string)</strong> - Any warnings that
+              may have occurred.
+            </li>
+            <li>
+              <strong>"errors" (array of struct)</strong> - Any errors that may
+              have occurred.
+            </li>
+          </ul>
+          <p>The response is formatted as follows:</p>
+
+          <div class="code-block">
+            {<br />
+            "request": {<br />
+            ...Request parameters...<br />
+            },<br />
+            "warnings": [ ...Warning messages... ],<br />
+            "errors": [ ...Error messages... ],<br />
+            "results": [<br />
+            {<br />
+            ...License record data...<br />
+            }<br />
+            }
+          </div>
+
+          <p>
+            In the payload of the response, "results" is an array of structs
+            with the following keys:
+          </p>
+
+          <table>
+            <thead>
+              <tr>
+                <th>Property</th>
+                <th>Type</th>
+                <th>Description</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>addrLine1</td>
+                <td>String</td>
+                <td>Licensee's Office address - line 1.</td>
+              </tr>
+              <tr>
+                <td>addrLine2</td>
+                <td>String</td>
+                <td>Licensee's Office address - line 2.</td>
+              </tr>
+              <tr>
+                <td>city</td>
+                <td>String</td>
+                <td>Licensee's Office address - city.</td>
+              </tr>
+              <tr>
+                <td>country</td>
+                <td>String</td>
+                <td>Licensee's Office address - 3-letter country code</td>
+              </tr>
+              <tr>
+                <td>email</td>
+                <td>String</td>
+                <td>Licensee's email address.</td>
+              </tr>
+              <tr>
+                <td>fax</td>
+                <td>String</td>
+                <td>Licensee's fax number.</td>
+              </tr>
+              <tr>
+                <td>firstName</td>
+                <td>String</td>
+                <td>First name of the licensee.</td>
+              </tr>
+              <tr>
+                <td>jurisdiction</td>
+                <td>String</td>
+                <td>
+                  Two-letter postal abbreviation of the jurisdiction in which
+                  the licensee is registered.
+                </td>
+              </tr>
+              <tr>
+                <td>lastName</td>
+                <td>String</td>
+                <td>Last name of the licensee.</td>
+              </tr>
+              <tr>
+                <td>licenseExpirationDate</td>
+                <td>Date</td>
+                <td>
+                  Expiration date of the license, formatted as yyyy-mm-dd.
+                </td>
+              </tr>
+              <tr>
+                <td>licenseIssueDate</td>
+                <td>Date</td>
+                <td>Issue date of the license, formatted as yyyy-mm-dd.</td>
+              </tr>
+              <tr>
+                <td>licenseNumber</td>
+                <td>String</td>
+                <td>License number of the licensee.</td>
+              </tr>
+              <tr>
+                <td>licenseStatus</td>
+                <td>String</td>
+                <td>
+                  License status of the licensee. Values differ among
+                  jurisdictions.
+                </td>
+              </tr>
+              <tr>
+                <td>licenseType</td>
+                <td>String</td>
+                <td>
+                  Licensee's license type. Values differ among jurisdictions.
+                </td>
+              </tr>
+              <tr>
+                <td>middleName</td>
+                <td>String</td>
+                <td>Middle name of the licensee.</td>
+              </tr>
+              <tr>
+                <td>officeName</td>
+                <td>String</td>
+                <td>Licensee's office name.</td>
+              </tr>
+              <tr>
+                <td>postalCode</td>
+                <td>String</td>
+                <td>Office address - postal code.</td>
+              </tr>
+              <tr>
+                <td>score</td>
+                <td>Numeric</td>
+                <td>
+                  The result's score (see Search Parameters for possible
+                  scores).
+                </td>
+              </tr>
+              <tr>
+                <td>stateProv</td>
+                <td>String</td>
+                <td>Office address - state/province.</td>
+              </tr>
+              <tr>
+                <td>suffix</td>
+                <td>String</td>
+                <td>Suffix of the licensee (such as "Jr" or "Sr")</td>
+              </tr>
+              <tr>
+                <td>telephone</td>
+                <td>String</td>
+                <td>Licensee's telephone number.</td>
+              </tr>
+            </tbody>
+          </table>
+
+          <h3 id="warnings-errors">Warnings and Errors</h3>
+          <p>
+            The web service may produce warnings and errors if it encounters a
+            problem with a request.
+          </p>
+          <p>
+            In cases where the issue is minor, the web service may be able to
+            recover and still produce a usable result. These are called
+            "warnings." A warning indicates that something went wrong while
+            processing the request, but the service was able to correct the
+            problem and still produce results. Examples of events that produce
+            warnings include:
+          </p>
+          <ul>
+            <li>
+              Failure to provide optional parameters (the warning indicates the
+              default value used).
+            </li>
+            <li>
+              Providing a minScore or maxResults value that is out of range.
+            </li>
+          </ul>
+          <p>
+            In the case of warnings, the service simply corrects the erroneous
+            value to an acceptable value, and continues to perform the search.
+            Searches that produce warnings will still return results, and
+            therefore they are logged to the database, just like a normal
+            search.
+          </p>
+          <p>
+            The "warnings" key in the response is an array of strings. Each
+            string is a human-readable warning message.
+          </p>
+
+          <p>
+            In other cases, the service may be unable to process a request and
+            produce usable results. These are called errors. An error indicates
+            that the service could not continue executing. Examples of events
+            that produce errors include:
+          </p>
+          <ul>
+            <li>
+              Failing to provide required search parameters, like "jurisdiction"
+              and "lastName"
+            </li>
+            <li>Providing an incorrect jurisdiction abbreviation</li>
+            <li>
+              Searching within a jurisdiction that does not participate in the
+              program
+            </li>
+            <li>
+              Searching in "live" mode when your account is only enabled for
+              "test" mode
+            </li>
+            <li>
+              Performing too many requests in a short amount of time (see "Rate
+              Limits" for more information)
+            </li>
+            <li>Searching using a disabled or expired account.</li>
+          </ul>
+
+          <p>The "errors" key in the response is an array of structs:</p>
+
+          <table>
+            <thead>
+              <tr>
+                <th>Property</th>
+                <th>Type</th>
+                <th>Description</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>error</td>
+                <td>String</td>
+                <td>The error code generated by the web service.</td>
+              </tr>
+              <tr>
+                <td>message</td>
+                <td>String</td>
+                <td>
+                  A human-readable message with information about what caused
+                  the error (and possibly how to fix it).
+                </td>
+              </tr>
+              <tr>
+                <td>type</td>
+                <td>String</td>
+                <td>Always "Fatal"</td>
+              </tr>
+            </tbody>
+          </table>
+
+          <p>
+            Multiple warnings may be present in the response. No more than one
+            "Fatal" error will exist.
+          </p>
+
+          <h3 id="testing-environment">Testing Environment</h3>
+          <p>
+            When developing your application to interface with the Search API,
+            we provide a testing API with some known records to search for.
+          </p>
+          <p>
+            The testing database is comprised of a random 1% of the records from
+            the live database. There are also several records of bogus data that
+            can be used for assuring that the web service returns expected
+            results.
+          </p>
+
+          <table>
+            <thead>
+              <tr>
+                <th>First</th>
+                <th>MI</th>
+                <th>Last</th>
+                <th>Lic. #</th>
+                <th>City</th>
+                <th>Juris.</th>
+                <th>Type</th>
+                <th>Status</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>JOHN</td>
+                <td>Q</td>
+                <td>DOE</td>
+                <td>000012345</td>
+                <td>Montgomery</td>
+                <td>AL</td>
+                <td>T</td>
+                <td>A</td>
+              </tr>
+              <tr>
+                <td>WILLIAM</td>
+                <td>R</td>
+                <td>JONES</td>
+                <td>0099487</td>
+                <td>Anchorage</td>
+                <td>AK</td>
+                <td>BROKER</td>
+                <td>ACTIVE</td>
+              </tr>
+              <tr>
+                <td>MARY</td>
+                <td>V</td>
+                <td>RICHARDSON</td>
+                <td>0089487</td>
+                <td>Juneau</td>
+                <td>AK</td>
+                <td>BROKER</td>
+                <td>ACTIVE</td>
+              </tr>
+            </tbody>
+          </table>
+
+          <p>
+            Users can enter any of the above as is and get a score of 100. One
+            can also obtain different confidences by using specifically
+            formatted requests.
+          </p>
+          <ul>
+            <li>
+              Searching for license number "12345" in AL gives one result with a
+              score of 30 (license number numeric reduction).
+            </li>
+            <li>
+              Searching for license number "000012345" and last name "doe" in AL
+              gives a score of 80 (exact license number and last name).
+            </li>
+            <li>
+              Searching for first name = "bill" and last name = "jones" in AK
+              gives one result with a score of 55 (exact last name and alternate
+              first name).
+            </li>
+            <li>
+              Searching for first name = "marie" and last name = "richardson" in
+              AK gives one result with a score of 50 (exact last name and
+              Soundex first name).
+            </li>
+          </ul>
+
+          <h2 id="rate-limits">Rate Limits & Tokens</h2>
+          <p>
+            Unless otherwise noted, the following rate limits apply
+            <em>per Feed</em>:
+          </p>
+          <ul>
+            <li>No concurrent requests</li>
+            <li>Max 3 requests per second</li>
+            <li>Max 5,000 requests per hour</li>
+          </ul>
+          <!-- a more standard backoff strategy? -->
+          <p>Violations result in HTTP <code>429</code> responses.</p>
+          <p>
+            The Rate Limits do not apply to the JWT Bearer Token, but to your
+            Feed. Every time you press "Copy Bearer Token" on the Feed within
+            the Data Marketplace, a new token is generated. This does not
+            invalidate previous tokens. Every token is valid for 1 year.
+          </p>
+
+          <h2 id="jurisdiction-info">
+            Jurisdiction Participation and License Format Information
+          </h2>
+          <p>
+            ARELLO is constantly working with its jurisdictions to get the
+            latest information as frequently as possible, but unfortunately,
+            there still is not 100% participation. Some jurisdictions are unable
+            to participate for legal reasons, and some are simply not ARELLO
+            members.
+          </p>
+          <p>
+            Additionally, jurisdictions which do participate have varying
+            license number formats, and it can be difficult to get an exact
+            match without knowing something about the format before conducting a
+            search. To help you perform better searches, ARELLO provides
+            information about jurisdiction participation, update frequency and
+            license number format in several formats which you can access and
+            use in your client application.
+          </p>
+
+          <p><strong>Endpoints and available formats:</strong></p>
+          <ul>
+            <li>
+              JSON:
+              <code
+                >https://www.arello.com/api/participants.cfm?format=json</code
+              >
+            </li>
+            <li>
+              XML:
+              <code
+                >https://www.arello.com/api/participants.cfm?format=xml</code
+              >
+            </li>
+            <li>
+              CSV:
+              <code
+                >https://www.arello.com/api/participants.cfm?format=csv</code
+              >
+            </li>
+          </ul>
+
+          <p>
+            These resources include the following information for each
+            jurisdiction:
+          </p>
+
+          <table>
+            <thead>
+              <tr>
+                <th>Property</th>
+                <th>Type</th>
+                <th>Description</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>JurisdictName</td>
+                <td>String</td>
+                <td>The full name of the jurisdiction.</td>
+              </tr>
+              <tr>
+                <td>Country</td>
+                <td>String</td>
+                <td>Country abbreviation.</td>
+              </tr>
+              <tr>
+                <td>IsParticipant</td>
+                <td>Boolean</td>
+                <td>
+                  Whether the jurisdiction participates in the program. This
+                  field is manually set by ARELLO staff.
+                </td>
+              </tr>
+              <tr>
+                <td>Status</td>
+                <td>String</td>
+                <td>
+                  "Active" or "Inactive". Jurisdictions become Inactive if no
+                  data is received from them in over 6 months.
+                </td>
+              </tr>
+              <tr>
+                <td>SubmissionInterval</td>
+                <td>String</td>
+                <td>
+                  "Daily", "Weekly", "Monthly", or "Intermittent". Value is set
+                  manually and may be approximate.
+                </td>
+              </tr>
+              <tr>
+                <td>dtLastProcAction</td>
+                <td>Datetime</td>
+                <td>
+                  Timestamp of last processing action (last attempted data
+                  import).
+                </td>
+              </tr>
+              <tr>
+                <td>CurrentProcStatus</td>
+                <td>String</td>
+                <td>
+                  "Success" or "Error" depending on the result of the last data
+                  processing action.
+                </td>
+              </tr>
+              <tr>
+                <td>NumRecords</td>
+                <td>Integer</td>
+                <td>
+                  Total number of licensee records in the database for this
+                  jurisdiction.
+                </td>
+              </tr>
+              <tr>
+                <td>LicNumFormat_Regex</td>
+                <td>String</td>
+                <td>
+                  A regular expression describing the expected license number
+                  format for this jurisdiction. Regular expressions can be used
+                  by software applications to validate user input.
+                </td>
+              </tr>
+              <tr>
+                <td>LicNumFormat_Desc</td>
+                <td>String</td>
+                <td>
+                  A "human readable" description of the jurisdiction's license
+                  number format, which you may display to assist with data entry
+                </td>
+              </tr>
+              <tr>
+                <td>LicNumFormat_PercentMatch</td>
+                <td>Float</td>
+                <td>
+                  A numeric value (0-100) indicating what percentage of license
+                  records for this jurisdiction matched the regular expression
+                  on file during the most recent data import.
+                </td>
+              </tr>
+            </tbody>
+          </table>
+
+          <h2 id="contact-us">Contact Us</h2>
+          <p>
+            For any questions or assistance, please contact us at:
+            <strong>support@sourceredb.com</strong>.
+          </p>
+
+          <div style="height: 100px"></div>
+        </div>
+      </main>
+    </div>
+
+    <script>
+      const tabs = document.querySelectorAll(".tab");
+      const contents = document.querySelectorAll(".tab-content");
+
+      tabs.forEach((tab) => {
+        tab.addEventListener("click", () => {
+          tabs.forEach((t) => t.classList.remove("active"));
+          contents.forEach((c) => c.classList.remove("active"));
+
+          tab.classList.add("active");
+          document.getElementById(tab.dataset.tab).classList.add("active");
+        });
+      });
+      function updateSectionNav() {
+        const activeTab = document.querySelector(".tab-content.active");
+        const headings = activeTab.querySelectorAll("h2");
+        const navList = document.getElementById("section-list");
+
+        // Clear existing navigation
+        navList.innerHTML = "";
+
+        headings.forEach((heading, index) => {
+          const id = heading.id || `section-${index}`;
+          heading.id = id;
+
+          const li = document.createElement("li");
+          const link = document.createElement("a");
+          link.href = `#${id}`;
+          link.textContent = heading.textContent;
+          li.appendChild(link);
+          navList.appendChild(li);
+        });
+
+        const navLinks = document.querySelectorAll("#section-list a");
+
+        function highlightNav() {
+          let scrollPos =
+            document.documentElement.scrollTop || document.body.scrollTop;
+          let currentId = "";
+
+          headings.forEach((h2) => {
+            const offset = h2.offsetTop - 60; // adjust for header height
+            if (scrollPos >= offset) {
+              currentId = h2.id;
+            }
+          });
+
+          navLinks.forEach((link) => {
+            link.classList.toggle(
+              "active",
+              link.getAttribute("href") === `#${currentId}`
+            );
+          });
+        }
+
+        window.removeEventListener("scroll", highlightNav);
+        window.addEventListener("scroll", highlightNav);
+      }
+
+      document.addEventListener("DOMContentLoaded", () => {
+        updateSectionNav();
+      });
+
+      // Update section navigation when tabs change
+      tabs.forEach((tab) => {
+        tab.addEventListener("click", () => {
+          setTimeout(updateSectionNav, 10); // Small delay to ensure tab content is displayed
+        });
+      });
+    </script>
   </body>
 </html>
