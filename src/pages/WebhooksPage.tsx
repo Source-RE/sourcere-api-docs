@@ -1,8 +1,8 @@
-import React, { useEffect } from 'react'
 import { useLocation, useParams, useNavigate } from 'react-router-dom'
 import { DocumentationLayout } from '../components/layout/DocumentationLayout'
 import { Section } from '../components/ui/Section'
 import { webhooksContent } from '../content/webhooks'
+import { useEffect } from 'react'
 
 export function WebhooksPage() {
   const location = useLocation()
