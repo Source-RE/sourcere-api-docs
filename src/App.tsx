@@ -5,6 +5,7 @@ import { SourceREPage } from './pages/SourceREPage'
 import { ARELLOPage } from './pages/ARELLOPage'
 import './index.css'
 import './App.css'
+import { WebhooksPage } from './pages/WebhooksPage'
 
 function App() {
   return (
@@ -13,10 +14,15 @@ function App() {
         <Header />
         <Routes>
           <Route path="/" element={<Navigate to="/sourcere" replace />} />
+          
           <Route path="/sourcere" element={<SourceREPage />} />
           <Route path="/sourcere/:sectionId" element={<SourceREPage />} />
+          
           <Route path="/arello-api" element={<ARELLOPage />} />
           <Route path="/arello-api/:sectionId" element={<ARELLOPage />} />
+
+          <Route path="/webhooks" element={<WebhooksPage />} />
+          <Route path="/webhooks/:sectionId" element={<WebhooksPage />} />
         </Routes>
       </div>
     </BrowserRouter>
@@ -24,4 +30,3 @@ function App() {
 }
 
 export default App
-

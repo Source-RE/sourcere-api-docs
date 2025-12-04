@@ -23,7 +23,7 @@ export interface CodeContent {
 export interface ListContent {
   type: 'list'
   ordered?: boolean
-  items: (string | (string | InlineCodeContent | LinkContent)[])[]
+  items: (string | (string | InlineCodeContent | LinkContent)[] | ListContent)[]
 }
 
 export interface SubSectionContent {
