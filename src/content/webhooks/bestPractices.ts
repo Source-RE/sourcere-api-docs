@@ -8,7 +8,15 @@ export const bestPractices: ContentSection[] = [
   {
     type: 'list',
     items: [
-      'Track for deduplication: Resource name, Resource record key, Entity event sequence.',
+      'Track for deduplication:',
+      {
+        type: 'list',
+        items: [
+          'Resource name',
+          'Resource record key',
+          'Entity event sequence',
+        ],
+      },
       'Pull records using the Web API as needed because webhooks only notify of changes not the change itself.',
       'Acknowledge POSTs quickly, even if full processing is deferred.',
     ],

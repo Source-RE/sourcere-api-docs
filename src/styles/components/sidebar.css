@@ -1,9 +1,9 @@
 .sidebar {
   position: fixed;
-  top: 60px;
+  top: 65px;
   left: 0;
   width: 240px;
-  height: calc(100vh - 60px);
+  height: calc(100vh - 65px);
   background: #ffffff;
   border-right: 1px solid #eee;
   overflow-y: auto;
@@ -30,7 +30,7 @@
 
 .sidebar__link {
   display: block;
-  padding: 16px 20px;
+  padding: 16px 12px;
   color: #000000;
   font-size: 15px;
   font-weight: 500;
