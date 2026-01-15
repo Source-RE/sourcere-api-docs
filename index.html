@@ -505,6 +505,38 @@
             </li>
           </ul>
 
+          <h2>Inactive Roster Records</h2>
+          <p>
+            Members whose MemberStatus is "Inactive" and Offices whose
+            OfficeStatus is "Inactive" are hidden from API responses UNLESS the
+            request filter explicitly contains a filter for "MemberStatus eq
+            'Inactive' OR OfficeStatus eq 'Inactive'".
+          </p>
+          <p>
+            For example, the following requests will return inactive members and
+            offices:
+          </p>
+          <div class="code-block">
+            https://api.sourceredb.com/odata/Member?$filter=MemberStatus eq
+            'Inactive'
+          </div>
+          <div class="code-block">
+            https://api.sourceredb.com/odata/Office?$filter=OfficeStatus eq
+            'Inactive'
+          </div>
+          <p>
+            And the following requests will return a specific inactive member or
+            office:
+          </p>
+          <div class="code-block">
+            https://api.sourceredb.com/odata/Member?$filter=MemberStatus eq
+            'Inactive' and MemberKey eq '[Member Key]'
+          </div>
+          <div class="code-block">
+            https://api.sourceredb.com/odata/Office?$filter=OfficeStatus eq
+            'Inactive' and OfficeKey eq '[Office Key]'
+          </div>
+
           <h2>Replication</h2>
           <h3>Initial Bulk Load</h3>
           <p>
@@ -1513,7 +1545,7 @@
           let currentId = "";
 
           headings.forEach((h2) => {
-            const offset = h2.offsetTop - 60; // adjust for header height
+            const offset = h2.offsetTop - 80; // adjust for header height
             if (scrollPos >= offset) {
               currentId = h2.id;
             }
