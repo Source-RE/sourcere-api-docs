@@ -8,6 +8,6 @@ export default defineConfig({
       jsxRuntime: 'automatic',
     }),
   ],
-  base: './',
+  base: '/',
 })
 
