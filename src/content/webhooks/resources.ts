@@ -13,9 +13,9 @@ export const resources: ContentSection[] = [
       'Media',
       'Member',
       'Office',
-      'Teams',
-      'Contacts',
-      '...and more, depending on your metadata',
+      'OpenHouse',
+      'PropertyRooms',
+      'PropertyUnitTypes',
     ],
   },
   {
