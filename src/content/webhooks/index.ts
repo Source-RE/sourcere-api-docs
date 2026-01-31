@@ -7,6 +7,7 @@ import { payloads } from './payloads'
 import { bestPractices } from './bestPractices'
 import { resources } from './resources'
 import { registration } from './registration'
+import { rateLimits } from './rateLimits'
 
 export const webhooksContent: DocumentationContent = {
   title: 'Push Replication Using Webhooks',
@@ -26,6 +27,7 @@ export const webhooksContent: DocumentationContent = {
     authentication: authentication,
     configuration: configuration,
     payloads: payloads,
+    'rate-limits': rateLimits,
     'best-practices': bestPractices,
     resources: resources,
     'registration': registration,

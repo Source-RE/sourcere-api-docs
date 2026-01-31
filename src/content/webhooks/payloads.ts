@@ -72,7 +72,7 @@ export const payloads: ContentSection[] = [
           ],
           [
             { type: 'code', text: 'EventTypes' },
-            ': Event types of that specific event, such as Insert, Update or Bulk.',
+            ': Event types of that specific event: Insert, Update, Delete and/or Bulk.',
           ],
         ],
       },
@@ -87,17 +87,17 @@ export const payloads: ContentSection[] = [
       {
         type: 'paragraph',
         content: [
-          'The structure for Receive events is identical to Push events, except instead of ',
+          'The structure for Receiving events is the same, except instead of the ',
           { type: 'code', text: 'X-SourceRe-Publisher-Name' },
-          ' header ',
+          ' header, the ',
           { type: 'code', text: 'X-SourceRe-Application-Name' },
-          ' is used:',
+          ' header is used:',
         ],
       },
       {
         type: 'list',
         items: [
-          [{ type: 'code', text: 'X-SourceRe-Application-Name' }, ': Application\'s name'],
+          [{ type: 'code', text: 'X-SourceRe-Consumer-Name' }, ': Consumer\'s name'],
         ],
       }
     ],

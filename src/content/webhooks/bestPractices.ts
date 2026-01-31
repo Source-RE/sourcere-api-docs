@@ -3,21 +3,33 @@ import type { ContentSection } from '../../types'
 export const bestPractices: ContentSection[] = [
   {
     type: 'paragraph',
-    content: 'After receiving an event, clients should:',
+    content: 'When sending POST requests, producers should:',
   },
   {
     type: 'list',
     items: [
-      'Track for deduplication:',
+      'Respect 429 responses by waiting for the number of seconds specified in the Retry-After header, or using exponential backoff if the header is not present.',
+      'Implement a timeout mechanism to abandon requests that exceed 15 seconds. SourceRE will respond with success or failure within this timeframe.',
+      'Send events in batches of up to 1000 per-payload under heavy event volume. Even under typical event volume, it is recommended to send in batches to reduce the number of requests. Producers who do not support batching should notify SourceRE before integration.',
+      'Avoid sending the same event multiple times. If an event is sent multiple times, SourceRE may reject the request with a 409 response.',
+    ],
+  },
+  {
+    type: 'paragraph',
+    content: 'After receiving an event payload, clients should:',
+  },
+  {
+    type: 'list',
+    items: [
+      'Track for deduplication (if batch is enabled):',
       {
         type: 'list',
         items: [
           'Resource name',
           'Resource record key',
-          'Entity event sequence',
         ],
       },
-      'Pull records using the Web API as needed because webhooks only notify of changes not the change itself.',
+      'Pull changed records using the SourceRE RESO Web API.',
       'Acknowledge POSTs quickly, even if full processing is deferred.',
     ],
   },
@@ -35,8 +47,7 @@ export const bestPractices: ContentSection[] = [
         type: 'list',
         items: [
           'Be secured via HTTPS.',
-          'Respond with 200 OK on success on maximum 10 seconds or timeout will occur.',
-          'Queue or asynchronously process events.',
+          'Respond with 200 OK on success on maximum 15 seconds or timeout will occur. For this reason, it is recommended to use asynchronous processing.',
         ],
       },
     ],

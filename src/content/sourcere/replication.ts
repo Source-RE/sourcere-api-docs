@@ -99,5 +99,54 @@ export const replication: ContentSection[] = [
       },
     ],
   },
+    {
+    type: 'subsection',
+    title: 'Inactive Roster Records',
+    level: 3,
+    content: [
+      {
+        type: 'paragraph',
+        content: [
+          'Members whose ',
+          { type: 'code', text: 'MemberStatus' },
+          ' is "Inactive" and Offices whose ',
+          { type: 'code', text: 'OfficeStatus' },
+          ' is "Inactive" are hidden from API responses, unless the request is for the single entity endpoint OR the request explicitly contains a filter on the status field for \'Inactive\'.',
+        ],
+      },
+      {
+        type: 'paragraph',
+        content: 'For example, the following requests will return inactive members and offices:',
+      },
+      {
+        type: 'code',
+        content: 'https://api.sourceredb.com/odata/Member?$filter=MemberStatus eq \'Inactive\'',
+      },
+      {
+        type: 'code',
+        content: 'https://api.sourceredb.com/odata/Office?$filter=OfficeStatus eq \'Inactive\'',
+      },
+      {
+        type: 'code',
+        content: 'https://api.sourceredb.com/odata/Member?$filter=MemberStatus in (\'Inactive\', \'Active\')',
+      },
+      {
+        type: 'code',
+        content: 'https://api.sourceredb.com/odata/Office?$filter=OfficeStatus in (\'Inactive\', \'Active\')',
+      },
+      {
+        type: 'paragraph',
+        content: 'And the following requests will return a specific inactive member or office:',
+      },
+      {
+        type: 'code',
+        content: 'https://api.sourceredb.com/odata/Member(\'[Member Key]\')',
+      },
+      {
+        type: 'code',
+        content: 'https://api.sourceredb.com/odata/Office(\'[Office Key]\')',
+      },
+    ],
+  },
 ]
 

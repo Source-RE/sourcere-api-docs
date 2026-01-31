@@ -3,7 +3,7 @@ import type { ContentSection } from '../../types'
 export const authentication: ContentSection[] = [
   {
     type: 'paragraph',
-    content: 'One or all of the following methods must be used:',
+    content: 'One or both of the following methods must be used:',
   },
   {
     type: 'list',
