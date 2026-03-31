@@ -436,14 +436,44 @@
           <p>
             The <code>PermittedUse</code> field on the
             <code>Field</code> resource contains an array of strings, each is an
-            MLS-defined usage type.
+            MLS-defined usage type. To retrieve this information, use the
+            following endpoint:
           </p>
           <div class="code-block">
             GET https://api.sourceredb.com/odata/Field
           </div>
+          <p>Example response payload:</p>
+          <div class="code-block">
+            { <br />
+            &nbsp;&nbsp;&nbsp;&nbsp;@odata.context:
+            "https://api.sourceredb.com/odata/$metadata#Fields", <br />
+            &nbsp;&nbsp;&nbsp;&nbsp;"value": [ <br />
+            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{
+            <br />
+            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"FieldName":
+            "ListPrice", <br />
+            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"ResourceName":
+            "Property", <br />
+            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"PermittedUse":
+            ["IDX", "VOW", "BBO"] <br />
+            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;},<br />
+            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{
+            <br />
+            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"FieldName":
+            "ListAgentEmail", <br />
+            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"ResourceName":
+            "Property", <br />
+            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"PermittedUse":
+            ["VOW", "BBO"] <br />
+            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;}
+            &nbsp;&nbsp;&nbsp;&nbsp;] <br />
+            }
+          </div>
           <p>
-            The <code>PermittedUse</code> field is an array of strings, each is
-            an MLS-defined usage type.
+            In the example response payload, the <code>PermittedUse</code> field
+            specifies that the ListPrice field is permitted for IDX, VOW, and
+            BBO usage, while the ListAgentEmail field is permitted for VOW and
+            BBO usage.
           </p>
           <h3>Record-Level Display and Usage</h3>
           <p>
@@ -460,7 +490,7 @@
             https://api.sourceredb.com/odata/Property?$select=ListingKey,InternetEntireListingDisplayYN,InternetAddressDisplayYN,InternetConsumerCommentYN,InternetAutomatedValuationDisplayYN
           </div>
           <!-- response payload example: ( make it have new lines for each field)-->
-          <p>Response payload example:</p>
+          <p>Example record:</p>
           <div class="code-block">
             { <br />
             &nbsp;&nbsp;&nbsp;&nbsp;"ListingKey": "abc123", <br />
