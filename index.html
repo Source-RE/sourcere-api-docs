@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
@@ -403,17 +403,60 @@
           <h2>Field & Record-Level Restrictions</h2>
           <p>
             Permissions are defined per Plan by the MLS and enforced
-            automatically. This may include:
+            automatically.
           </p>
-          <ul>
-            <li>Which fields are included</li>
-            <li>Which records are visible</li>
-          </ul>
           <p>
-            The MLS may also define display and usage restrictions for specific
-            fields and entities. Clients must consult the MLS for display and
-            usage guidelines.
+            The MLS further defines display and usage restrictions for specific
+            fields and records.
           </p>
+          <!-- show that we provide information about field level display and usage at https://api.sourceredb.com/odata/Field, in the PermittedUse field, which is an array of strings, each is an MLS-defined usage type -->
+
+          <h3>Field-Level Display and Usage</h3>
+          <p>
+            The <code>PermittedUse</code> field on the
+            <code>Field</code> resource contains an array of strings, each is an
+            MLS-defined usage type.
+          </p>
+          <div class="code-block">
+            GET
+            https://api.sourceredb.com/odata/Field?$select=FieldName,PermittedUse
+          </div>
+          <p>
+            The <code>PermittedUse</code> field is an array of strings, each is
+            an MLS-defined usage type.
+          </p>
+          <!-- state that record-level display and usage is defined using the RESO Internet fields including InternetEntireListingDisplayYN, InternetAddressDisplayYN, InternetConsumerCommentYN, and InternetAutomatedValuationDisplayYN (for Property records) as well as the PermittedUse field on all entitiy types in Some MLSs only -->
+          <h3>Record-Level Display and Usage</h3>
+          <p>
+            The <code>InternetEntireListingDisplayYN</code>,
+            <code>InternetAddressDisplayYN</code>,
+            <code>InternetConsumerCommentYN</code>, and
+            <code>InternetAutomatedValuationDisplayYN</code> fields on the
+            <code>Property</code> resource contain boolean values indicating
+            whether the record is displayed on the internet.
+          </p>
+          <div class="code-block">
+            GET
+            https://api.sourceredb.com/odata/Property?$select=InternetEntireListingDisplayYN,InternetAddressDisplayYN,InternetConsumerCommentYN,InternetAutomatedValuationDisplayYN
+          </div>
+          <!-- response payload example: -->
+          <div class="code-block">
+            { "InternetEntireListingDisplayYN": true,
+            "InternetAddressDisplayYN": true, "InternetConsumerCommentYN": true,
+            "InternetAutomatedValuationDisplayYN": true }
+          </div>
+          <!-- state that other MLSs may define record-level display and usage using the PermittedUse field on all entitiy types -->
+          <p>
+            Some MLSs may further define record-level display and usage using
+            the
+            <code>PermittedUse</code> field on all entitiy types, with the same
+            format as the <code>PermittedUse</code> field on the
+            <code>Field</code> resource.
+          </p>
+          <div class="code-block">
+            GET
+            https://api.sourceredb.com/odata/Property?$select=Property,PermittedUse
+          </div>
 
           <h2>Pagination & Filtering</h2>
           <h3>Pagination</h3>
@@ -625,7 +668,7 @@
           navLinks.forEach((link) => {
             link.classList.toggle(
               "active",
-              link.getAttribute("href") === `#${currentId}`
+              link.getAttribute("href") === `#${currentId}`,
             );
           });
         }
