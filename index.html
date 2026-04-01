@@ -581,36 +581,34 @@
             </li>
           </ul>
 
-          <h2>Inactive Roster Records</h2>
+          <h2>Non-Visible Roster Records</h2>
           <p>
-            Members whose MemberStatus is "Inactive" and Offices whose
-            OfficeStatus is "Inactive" are hidden from API responses, unless the
-            request is for the single entity endpoint OR the request explicitly
-            contains a filter on the status field for 'Inactive'.
+            Member and Office records whose <code>Visible</code> field is
+            <code>false</code> are hidden from API responses, unless the request
+            is for the single entity endpoint OR the request explicitly contains
+            a filter on the Visible field for <code>false</code>.
           </p>
           <p>
-            For example, the following requests will return inactive members and
-            offices:
+            For example, the following requests will return non-Visible members
+            and offices:
           </p>
           <div class="code-block">
-            https://api.sourceredb.com/odata/Member?$filter=MemberStatus eq
-            'Inactive'
+            https://api.sourceredb.com/odata/Member?$filter=Visible eq false
           </div>
           <div class="code-block">
-            https://api.sourceredb.com/odata/Office?$filter=OfficeStatus eq
-            'Inactive'
+            https://api.sourceredb.com/odata/Office?$filter=Visible eq false
           </div>
           <div class="code-block">
-            https://api.sourceredb.com/odata/Member?$filter=MemberStatus in
-            ('Inactive', 'Active')
+            https://api.sourceredb.com/odata/Member?$filter=Visible in (false,
+            true)
           </div>
           <div class="code-block">
-            https://api.sourceredb.com/odata/Office?$filter=OfficeStatus in
-            ('Inactive', 'Active')
+            https://api.sourceredb.com/odata/Office?$filter=Visible in (false,
+            true)
           </div>
           <p>
-            And the following requests will return a specific inactive member or
-            office:
+            And the following requests will return a specific member or office,
+            regardless of their Visible field:
           </p>
           <div class="code-block">
             https://api.sourceredb.com/odata/Member('[Member Key]')
