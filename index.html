@@ -693,7 +693,11 @@
               <li><code>xlarge</code>: 1600 pixels (height)</li>
             </ul>
 
-            A class <strong>MUST</strong> be specified for all resized images.
+            <strong>NOTE:</strong> 
+            <br />
+            The image will not be resized to a larger size than the original.
+            <br />
+            A class <strong>MUST</strong> be specified when using the resize domain. No class specified will result in a <code>403</code> error.
             <br />
             <br />
             Example:
