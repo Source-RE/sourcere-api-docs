@@ -665,10 +665,40 @@
 
           <h3>Media</h3>
           <p>
-            The <code>Media</code> resource contains a MediaURL pointing to
+            The <code>Media</code> resource contains a <code>MediaURL</code> field pointing to
             hosted images and documents. Media can be replicated as a top level
             resource and as a navigation property on several resources,
             including: Property, Office, Member, Team, and OpenHouse.
+            <br />
+            Depending on the MLS, Videos, Virtual Tours and other media types
+            may be available, with their content sometimes hosted in the
+            <code>MediaHTML</code> field.
+            <br />
+            <br />
+            <h4>Image Resizing</h4>
+            Images can be retrieved in various sizes, by changing the domain of
+            the MediaURL from cdn.sourceredb.com to cdn-resize.sourceredb.com,
+            and specifying the desired <code>class</code> query parameter.
+            <br />
+            The available classes are:
+            <ul>
+              <li><code>thumbnail</code>: 65x42 pixels</li>
+              <li><code>small</code>: 480 pixels (height)</li>
+              <li><code>medium</code>: 768 pixels (height)</li>
+              <li><code>large</code>: 1200 pixels (height)</li>
+              <li><code>xlarge</code>: 1600 pixels (height)</li>
+            </ul>
+            <br />
+            Example:
+            <br />
+            <div class="code-block">
+              Original URL:
+              <code>https://cdn.sourceredb.com/media/1234567890/image.jpg</code>
+              <br />
+              Resized URL:
+              <code>https://cdn-resize.sourceredb.com/media/1234567890/image.jpg?class=small</code>
+            </div>
+            
           </p>
 
           <h2>Rate Limits</h2>
