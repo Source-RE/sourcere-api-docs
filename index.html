@@ -583,7 +583,7 @@
 
           <h2>Non-Visible Roster Records</h2>
           <p>
-            Member and Office records whose <code>Visible</code> field is
+            In certain MLSs, Member and Office records will have a Visible (boolean) field, which helps to indicate whether the record is intended for general distribution. Records whose <code>Visible</code> field is
             <code>false</code> are hidden from API responses, unless the request
             is for the single entity endpoint OR the request explicitly contains
             a filter on the Visible field for <code>false</code>.
