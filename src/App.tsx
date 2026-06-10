@@ -6,6 +6,7 @@ import { ARELLOPage } from './pages/ARELLOPage'
 import './index.css'
 import './App.css'
 import { WebhooksPage } from './pages/WebhooksPage'
+import { AddEditPage } from './pages/AddEditPage'
 
 function App() {
   return (
@@ -23,6 +24,9 @@ function App() {
 
           <Route path="/webhooks" element={<WebhooksPage />} />
           <Route path="/webhooks/:sectionId" element={<WebhooksPage />} />
+
+          <Route path="/addedit" element={<AddEditPage />} />
+          <Route path="/addedit/:sectionId" element={<AddEditPage />} />
         </Routes>
       </div>
     </BrowserRouter>

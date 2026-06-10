@@ -8,6 +8,7 @@ export function Header() {
   const isSourceRE = path.startsWith('/sourcere') || path === '/'
   const isArello = path.startsWith('/arello-api')
   const isWebhooks = path.startsWith('/webhooks')
+  const isAddEdit = path.startsWith('/addedit')
 
   return (
     <header className="header">
@@ -33,6 +34,12 @@ export function Header() {
           className={`header__tab ${isWebhooks ? 'header__tab--active' : ''}`}
         >
           Webhooks
+        </Link>
+        <Link
+          to="/addedit"
+          className={`header__tab ${isAddEdit ? 'header__tab--active' : ''}`}
+        >
+          Add/Edit
         </Link>
       </nav>
     </header>
